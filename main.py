@@ -97,7 +97,6 @@ def load_game(name):
     return player
 
 
-
 def pause_menu(screen, player):
     font = pygame.font.Font(None, 60)
     small_font = pygame.font.Font(None, 36)
@@ -132,45 +131,94 @@ def pause_menu(screen, player):
         clock.tick(60)
 
 
+def get_player_name(screen, prompt="Enter player name:"):
+    font = pygame.font.Font(None, 48)
+    clock = pygame.time.Clock()
+    input_text = ""
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit(); exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN and input_text.strip():
+                    return input_text.strip()
+                elif event.key == pygame.K_BACKSPACE:
+                    input_text = input_text[:-1]
+                elif len(input_text) < 20:  # limit name length
+                    input_text += event.unicode
+
+        screen.fill((0,0,0))
+        prompt_surface = font.render(prompt, True, (255,255,255))
+        input_surface = font.render(input_text, True, (200,200,200))
+        screen.blit(prompt_surface, (SCREEN_WIDTH//2 - prompt_surface.get_width()//2, 200))
+        screen.blit(input_surface, (SCREEN_WIDTH//2 - input_surface.get_width()//2, 300))
+        pygame.display.flip()
+        clock.tick(60)
+
+
 def main_menu(screen):
-    pygame.display.set_caption("Cyborg Soul - Main Menu")
     font = pygame.font.Font(None, 74)
     small_font = pygame.font.Font(None, 36)
 
     title = font.render("Cyborg Soul", True, (255, 255, 255))
-    start_text = small_font.render("Press ENTER to Start", True, (200, 200, 200))
+    start_text = small_font.render("Press ENTER to Start New Game", True, (200, 200, 200))
     load_text = small_font.render("Press L to Load Game", True, (200, 200, 200))
     quit_text = small_font.render("Press ESC to Quit", True, (200, 200, 200))
 
     clock = pygame.time.Clock()
-
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
+                pygame.quit(); exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    return "new"
+                    name = get_player_name(screen, "Name your character:")
+                    return "new", name
                 elif event.key == pygame.K_l:
-                    return "load"
+                    name = get_player_name(screen, "Enter save name:")
+                    return "load", name
                 elif event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    exit()
+                    pygame.quit(); exit()
 
         screen.fill((0, 0, 0))
         screen.blit(title, (SCREEN_WIDTH // 2 - title.get_width() // 2, 150))
         screen.blit(start_text, (SCREEN_WIDTH // 2 - start_text.get_width() // 2, 300))
         screen.blit(load_text, (SCREEN_WIDTH // 2 - load_text.get_width() // 2, 350))
         screen.blit(quit_text, (SCREEN_WIDTH // 2 - quit_text.get_width() // 2, 400))
+        pygame.display.flip()
+        clock.tick(60)
 
+
+def choose_save_file(screen):
+    saves = [f[:-10] for f in os.listdir(SAVE_FOLDER) if f.endswith("_save.json")]
+    if not saves:
+        return None
+    font = pygame.font.Font(None, 48)
+    clock = pygame.time.Clock()
+    index = 0
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit(); exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    return saves[index]
+                elif event.key == pygame.K_UP:
+                    index = (index - 1) % len(saves)
+                elif event.key == pygame.K_DOWN:
+                    index = (index + 1) % len(saves)
+
+        screen.fill((0,0,0))
+        for i, name in enumerate(saves):
+            color = (255,255,0) if i == index else (200,200,200)
+            text_surface = font.render(name, True, color)
+            screen.blit(text_surface, (SCREEN_WIDTH//2 - text_surface.get_width()//2, 200 + i*50))
         pygame.display.flip()
         clock.tick(60)
 
 
 
-
-def game_loop(load=False):
+def game_loop(player):
     pygame.display.set_caption("Cyborg Soul")
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -181,12 +229,9 @@ def game_loop(load=False):
     Player.containers = (updatable, drawable)
     BattleField.containers = updatable
 
-    player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+    player.add(*Player.containers)  # make sure player is in groups
     crosshair = Crosshair()
     field = BattleField(player)
-
-    if load:
-        load_game(player)
 
     dt = 0
     running = True
@@ -211,15 +256,20 @@ def game_loop(load=False):
         pygame.display.flip()
         dt = clock.tick(60) / 1000
 
+
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     while True:
-        choice = main_menu(screen)
+        choice, name = main_menu(screen)
         if choice == "new":
-            game_loop(load=False)
+            player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, name)
+            game_loop(player)
         elif choice == "load":
-            game_loop(load=True)
+            player = load_game(name)
+            if player:
+                game_loop(player)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
