@@ -48,7 +48,8 @@ def save_game(player):
         "leg": player.leg,
         "resistance": player.resistance,
         "immunity": player.immunity,
-        "vulnerability": player.vulnerability
+        "vulnerability": player.vulnerability,
+        "inventory":player.inventory
     }
 
     with open(filename, "w") as f:
@@ -92,6 +93,7 @@ def load_game(name):
     player.resistance = data["resistance"]
     player.immunity = data["immunity"]
     player.vulnerability = data["vulnerability"]
+    player.inventory = data["inventory"]
 
     print(f"Game loaded from {filename}")
     return player
@@ -215,7 +217,6 @@ def choose_save_file(screen):
             screen.blit(text_surface, (SCREEN_WIDTH//2 - text_surface.get_width()//2, 200 + i*50))
         pygame.display.flip()
         clock.tick(60)
-
 
 
 def game_loop(player):
