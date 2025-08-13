@@ -8,6 +8,7 @@ from parts import *
 from constants import *
 from crosshair import *
 from battlefield import *
+from utils import *
 
 
 SAVE_FOLDER = "saves"
@@ -99,6 +100,75 @@ def load_game(name):
     return player
 
 
+def inventory_menu(screen, player):
+    font = pygame.font.Font(None, 48)
+    small_font = pygame.font.Font(None, 24)
+
+    clock = pygame.time.Clock()
+    selected_index = 0
+    page = 0
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit(); exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE or event.key == pygame.K_r:
+                    return
+                elif event.key == pygame.K_DOWN:
+                    selected_index = (selected_index + 1) % min(ITEMS_PER_PAGE, len(player.inventory) - page * ITEMS_PER_PAGE)
+                elif event.key == pygame.K_UP:
+                    selected_index = (selected_index - 1) % min(ITEMS_PER_PAGE, len(player.inventory) - page * ITEMS_PER_PAGE)
+                elif event.key == pygame.K_RIGHT:
+                    page = min(page + 1, max(0, (len(player.inventory) - 1) // ITEMS_PER_PAGE))
+                    selected_index = 0
+                elif event.key == pygame.K_LEFT:
+                    page = max(0, page - 1)
+                    selected_index = 0
+                elif event.key == pygame.K_RETURN:
+                    if player.inventory:
+                        item = player.inventory[page * ITEMS_PER_PAGE + selected_index]
+                        player.equip(item)
+
+        screen.fill((30, 30, 30))
+
+        title = font.render(f"Inventory (Page {page + 1})", True, (255, 255, 255))
+        screen.blit(title, (SCREEN_WIDTH // 2 - title.get_width() // 2, 50))
+
+        # Show current humanity
+        humanity_text = small_font.render(f"Humanity: {player.humanity}", True, (255, 180, 180))
+        screen.blit(humanity_text, (SCREEN_WIDTH - humanity_text.get_width() - 20, 20))
+
+        # Display items for current page
+        start_index = page * ITEMS_PER_PAGE
+        end_index = start_index + ITEMS_PER_PAGE
+        for i, item in enumerate(player.inventory[start_index:end_index]):
+            color = (255, 255, 0) if i == selected_index else (200, 200, 200)
+
+            if isinstance(item, RangedArm):
+                text = f"{item.condition} {item.name}"
+                stats = (
+                    f"Worth: {item.worth} | "
+                    f"Rng+{item.ranged_bonus} | "
+                    f"Shoot+{item.shoot_bonus} | "
+                    f"Rate {item.rate} | "
+                    f"Cost {item.cost} humanity"
+                )
+                item_surface = small_font.render(text, True, color)
+                stats_surface = small_font.render(stats, True, (180, 180, 180))
+
+                screen.blit(item_surface, (50, 150 + i * 60))
+                screen.blit(stats_surface, (70, 180 + i * 60))
+            else:
+                text = f"{item.__class__.__name__} ({item.condition})"
+                item_surface = small_font.render(text, True, color)
+                screen.blit(item_surface, (50, 150 + i * 40))
+
+        pygame.display.flip()
+        clock.tick(60)
+
+
+
 def pause_menu(screen, player):
     font = pygame.font.Font(None, 60)
     small_font = pygame.font.Font(None, 36)
@@ -156,6 +226,18 @@ def get_player_name(screen, prompt="Enter player name:"):
         screen.blit(input_surface, (SCREEN_WIDTH//2 - input_surface.get_width()//2, 300))
         pygame.display.flip()
         clock.tick(60)
+
+def status_screen(screen, player):
+    pass
+
+def game_over(screen):
+    font = pygame.font.Font(None, 74)
+    small_font = pygame.font.Font(None, 36)
+    game_over_note = font.render("Game OVER", True, (255, 255, 255))
+    bad_end_hum = small_font.render("You lost yourself to the machine", True, (200, 200, 200))
+    screen.fill((0, 0, 0))
+    screen.blit(game_over_note, (SCREEN_WIDTH // 2 - game_over_note.get_width() // 2, 150))
+    screen.blit(bad_end_hum, (SCREEN_WIDTH // 2 - bad_end_hum.get_width() // 2, 300))
 
 
 def main_menu(screen):
@@ -226,13 +308,20 @@ def game_loop(player):
 
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
+    shots = pygame.sprite.Group()
 
     Player.containers = (updatable, drawable)
     BattleField.containers = updatable
+    Shot.containers = (shots, updatable, drawable)
 
     player.add(*Player.containers)  # make sure player is in groups
     crosshair = Crosshair()
     field = BattleField(player)
+
+    player.inventory.append(generate_ranged_arm())
+    player.inventory.append(generate_ranged_arm())
+    player.inventory.append(generate_ranged_arm())
+
 
     dt = 0
     running = True
@@ -245,6 +334,8 @@ def game_loop(player):
                     choice = pause_menu(screen, player)
                     if choice == "quit":
                         return  # quit to main menu
+                if event.key == pygame.K_i:
+                    inventory_menu(screen, player)
 
         for obj in updatable:
             obj.update(dt)
@@ -253,6 +344,9 @@ def game_loop(player):
         for obj in drawable:
             obj.draw(screen)
         crosshair.draw(screen)
+
+        if player.humanity <= 0:
+            game_over(screen)
 
         pygame.display.flip()
         dt = clock.tick(60) / 1000

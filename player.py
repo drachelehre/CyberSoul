@@ -3,6 +3,7 @@ import math
 from entity import *
 from constants import *
 from rangedarm import *
+from shot import *
 
 
 class Player(Entity):
@@ -24,13 +25,14 @@ class Player(Entity):
         self.armor_bonus = 0
         self.speed = PLAYER_BASE_SPEED
         self.speed_bonus = 0
-        self.humanity = 100
+        self.humanity = 1000
         self.rotation = 0
         self.add(*self.containers)
         self.timer = 0
         self.credits = 0
         self.shoot_range = SHOT_BASE_RANGE
         self.shoot_bonus = 0
+        self.shot_rate = 1.5
         self.melee_size = 40
         self.melee_size_bonus = 0
         self.chip = None
@@ -62,7 +64,8 @@ class Player(Entity):
         rotated = []
         for px, py in points:
             vec = pygame.Vector2(px, py).rotate(self.rotation)  # negative for pygame's y-down
-            rotated.append((self.x + vec.x, self.y + vec.y))
+
+            rotated.append((self.position.x + vec.x, self.position.y + vec.y))
         return rotated
 
     def draw(self, screen):
@@ -73,32 +76,41 @@ class Player(Entity):
         return forward * PLAYER_BASE_SPEED * dt
 
     def equip(self, part):
-        """Equip a part and update player stats."""
-        # Identify part type and equip to correct slot
+        """
+        Equip a Part object, deduct humanity, and apply its bonuses.
+        Old part bonuses are removed but humanity is never refunded.
+        """
+        # Humanity cost is paid immediately
+        self.humanity -= part.cost
+        if self.humanity < 0:
+            self.humanity = 0  # just to avoid going negative
+
+        # Equip based on type
         if isinstance(part, RangedArm):
-            # Remove bonuses from old part if one is equipped
+            # Remove bonuses from currently equipped ranged arm and put back in inventory
             if self.r_arm:
                 self.ranged_bonus -= self.r_arm.ranged_bonus
                 self.shoot_bonus -= self.r_arm.shoot_bonus
+                self.inventory.append(self.r_arm)
 
+            # Equip new part
             self.r_arm = part
             self.ranged_bonus += part.ranged_bonus
             self.shoot_bonus += part.shoot_bonus
-            self.humanity -= part.cost
+            self.shot_rate = self.r_arm.rate
 
-        # You can add more part type checks here:
-        # elif isinstance(part, MeleeArm): ...
-        # elif isinstance(part, ChestArmor): ...
-        # etc.
+        # TODO: elif isinstance(part, MeleeArm): ...
+        # TODO: elif isinstance(part, ChestArmor): ...
+        # TODO: add other types here
 
-        # Optionally remove it from inventory if you want "equip means take out of backpack"
+        # Remove from inventory so it's not re-used
         if part in self.inventory:
             self.inventory.remove(part)
 
     def update(self, dt):
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        dx = mouse_x - self.x
-        dy = mouse_y - self.y
+        dx = mouse_x - self.position.x
+        dy = mouse_y - self.position.y
         self.rotation = math.degrees(math.atan2(dy, dx))  # store in degrees
 
         keys = pygame.key.get_pressed()
@@ -112,8 +124,31 @@ class Player(Entity):
             move_vec.y -= 1
         if keys[pygame.K_s]:
             move_vec.y += 1
+        if pygame.mouse.get_pressed():
+            self.shoot(dt)
 
         if move_vec.length_squared() > 0:
             move_vec = move_vec.normalize() * PLAYER_BASE_SPEED * dt
-            self.x += move_vec.x
-            self.y += move_vec.y
+            self.position += move_vec
+
+    def shoot(self, dt):
+        if self.timer > 0:
+            self.timer -= dt
+            return
+
+        if not pygame.mouse.get_pressed()[0]:  # Left click only
+            return
+
+        direction = pygame.Vector2(1, 0).rotate(self.rotation)
+        velocity = direction * PLAYER_SHOOT_SPEED
+
+        shot = Shot(
+            self.position.x,
+            self.position.y,
+            velocity,
+            self.shoot_range + self.shoot_bonus
+        )
+
+        shot.add(*Shot.containers)
+        self.timer = self.shot_rate
+
