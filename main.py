@@ -9,6 +9,7 @@ from constants import *
 from crosshair import *
 from battlefield import *
 from utils import *
+from melee import *
 
 
 SAVE_FOLDER = "saves"
@@ -91,9 +92,6 @@ def load_game(name):
     player.m_arm = data["m_arm"]
     player.chest = data["chest"]
     player.leg = data["leg"]
-    player.resistance = data["resistance"]
-    player.immunity = data["immunity"]
-    player.vulnerability = data["vulnerability"]
     player.inventory = data["inventory"]
 
     print(f"Game loaded from {filename}")
@@ -166,7 +164,6 @@ def inventory_menu(screen, player):
 
         pygame.display.flip()
         clock.tick(60)
-
 
 
 def pause_menu(screen, player):
@@ -309,10 +306,12 @@ def game_loop(player):
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     shots = pygame.sprite.Group()
+    melee = pygame.sprite.Group()
 
     Player.containers = (updatable, drawable)
     BattleField.containers = updatable
     Shot.containers = (shots, updatable, drawable)
+    Melee.containers = (melee, updatable, drawable)
 
     player.add(*Player.containers)  # make sure player is in groups
     crosshair = Crosshair()
@@ -321,7 +320,6 @@ def game_loop(player):
     player.inventory.append(generate_ranged_arm())
     player.inventory.append(generate_ranged_arm())
     player.inventory.append(generate_ranged_arm())
-
 
     dt = 0
     running = True

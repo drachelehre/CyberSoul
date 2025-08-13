@@ -4,6 +4,7 @@ from entity import *
 from constants import *
 from rangedarm import *
 from shot import *
+from melee import *
 
 
 class Player(Entity):
@@ -19,8 +20,10 @@ class Player(Entity):
         self.health = self.health_max
         self.ranged_attack = 2
         self.ranged_bonus = 0
+        self.total_ranged = self.ranged_attack + self.ranged_bonus
         self.melee_attack = 2
         self.melee_bonus = 0
+        self.total_melee = self.melee_attack + self.melee_bonus
         self.defense = 1
         self.armor_bonus = 0
         self.speed = PLAYER_BASE_SPEED
@@ -33,17 +36,15 @@ class Player(Entity):
         self.shoot_range = SHOT_BASE_RANGE
         self.shoot_bonus = 0
         self.shot_rate = 1.5
-        self.melee_size = 40
+        self.melee_size = MELEE_BASE_SIZE
         self.melee_size_bonus = 0
+        self.melee_rate = MELEE_SWIPE_RATE
         self.chip = None
         self.eye = None
         self.r_arm = None
         self.m_arm = None
         self.chest = None
         self.leg = None
-        self.resistance = None
-        self.immunity = None
-        self.vulnerability = None
         self.inventory = []
 
     def player_shape(self):
@@ -108,14 +109,15 @@ class Player(Entity):
             self.inventory.remove(part)
 
     def update(self, dt):
+        # ROTATION toward mouse
         mouse_x, mouse_y = pygame.mouse.get_pos()
         dx = mouse_x - self.position.x
         dy = mouse_y - self.position.y
-        self.rotation = math.degrees(math.atan2(dy, dx))  # store in degrees
+        self.rotation = math.degrees(math.atan2(dy, dx))
 
+        # MOVEMENT
         keys = pygame.key.get_pressed()
         move_vec = pygame.Vector2(0, 0)
-
         if keys[pygame.K_a]:
             move_vec.x -= 1
         if keys[pygame.K_d]:
@@ -124,12 +126,16 @@ class Player(Entity):
             move_vec.y -= 1
         if keys[pygame.K_s]:
             move_vec.y += 1
-        if pygame.mouse.get_pressed():
-            self.shoot(dt)
 
         if move_vec.length_squared() > 0:
             move_vec = move_vec.normalize() * PLAYER_BASE_SPEED * dt
             self.position += move_vec
+
+        # ATTACKS
+        if pygame.mouse.get_pressed()[0]:
+            self.shoot(dt)
+        if pygame.mouse.get_pressed()[2]:
+            self.melee(dt)
 
     def shoot(self, dt):
         if self.timer > 0:
@@ -152,3 +158,15 @@ class Player(Entity):
         shot.add(*Shot.containers)
         self.timer = self.shot_rate
 
+    def melee(self, dt):
+        if self.timer > 0:
+            self.timer -= dt
+            return
+
+        if not pygame.mouse.get_pressed()[2]:  # Right click only
+            return
+
+        melee_attack = Melee(self, self.position.x, self.position.y)
+        melee_attack.add(*Melee.containers)
+
+        self.timer = self.melee_rate
