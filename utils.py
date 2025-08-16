@@ -2,6 +2,7 @@ import random
 from lists import *
 from parts import *
 from rangedarm import *
+from meleearm import *
 
 
 def random_condition():
@@ -13,6 +14,7 @@ def random_condition():
             return cond
     return "good"  # fallback
 
+
 def generate_ranged_arm():
     name, stats = random.choice(list(ranged_arms.items()))
     worth, cost, rng_bonus, shoot_bonus, rate = stats
@@ -20,5 +22,15 @@ def generate_ranged_arm():
     part = RangedArm(cond, worth, cost, rng_bonus, shoot_bonus, rate)
     part.name = name
     part.rate = rate
-    part.cost_adjust()  # apply condition scaling
+    part.ranged_adjust()  # apply condition scaling
+    return part
+
+
+def generate_melee_arm():
+    name, stats = random.choice(list(melee_arms.items()))
+    worth, cost, melee_attack, melee_size = stats
+    cond = random_condition()
+    part = MeleeArm(cond, worth, cost, melee_attack, melee_size)
+    part.name = name
+    part.melee_adjust()
     return part

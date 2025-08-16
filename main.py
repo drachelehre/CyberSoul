@@ -28,20 +28,14 @@ def save_game(player):
         "health": player.health,
         "health_max": player.health_max,
         "ranged_attack": player.ranged_attack,
-        "ranged_bonus": player.ranged_bonus,
         "melee_attack": player.melee_attack,
-        "melee_bonus": player.melee_bonus,
         "defense": player.defense,
-        "armor_bonus": player.armor_bonus,
         "speed": player.speed,
-        "speed_bonus": player.speed_bonus,
         "humanity": player.humanity,
         "rotation": player.rotation,
         "credits": player.credits,
         "shoot_range": player.shoot_range,
-        "shoot_bonus": player.shoot_bonus,
         "melee_size": player.melee_size,
-        "melee_size_bonus": player.melee_size_bonus,
         "chip": player.chip,
         "eye": player.eye,
         "r_arm": player.r_arm,
@@ -51,7 +45,7 @@ def save_game(player):
         "resistance": player.resistance,
         "immunity": player.immunity,
         "vulnerability": player.vulnerability,
-        "inventory":player.inventory
+        "inventory": player.inventory
     }
 
     with open(filename, "w") as f:
@@ -72,20 +66,14 @@ def load_game(name):
     player.health = data["health"]
     player.health_max = data["health_max"]
     player.ranged_attack = data["ranged_attack"]
-    player.ranged_bonus = data["ranged_bonus"]
     player.melee_attack = data["melee_attack"]
-    player.melee_bonus = data["melee_bonus"]
     player.defense = data["defense"]
-    player.armor_bonus = data["armor_bonus"]
     player.speed = data["speed"]
-    player.speed_bonus = data["speed_bonus"]
     player.humanity = data["humanity"]
     player.rotation = data["rotation"]
     player.credits = data["credits"]
     player.shoot_range = data["shoot_range"]
-    player.shoot_bonus = data["shoot_bonus"]
     player.melee_size = data["melee_size"]
-    player.melee_size_bonus = data["melee_size_bonus"]
     player.chip = data["chip"]
     player.eye = data["eye"]
     player.r_arm = data["r_arm"]
@@ -147,10 +135,22 @@ def inventory_menu(screen, player):
                 text = f"{item.condition} {item.name}"
                 stats = (
                     f"Worth: {item.worth} | "
-                    f"Rng+{item.ranged_bonus} | "
-                    f"Shoot+{item.shoot_bonus} | "
+                    f"Attack +{item.ranged_attack} | "
+                    f"Range +{item.shoot_range} | "
                     f"Rate {item.rate} | "
                     f"Cost {item.cost} humanity"
+                )
+                item_surface = small_font.render(text, True, color)
+                stats_surface = small_font.render(stats, True, (180, 180, 180))
+
+                screen.blit(item_surface, (50, 150 + i * 60))
+                screen.blit(stats_surface, (70, 180 + i * 60))
+            elif isinstance(item, MeleeArm):
+                text = f"{item.condition} {item.name}"
+                stats = (
+                    f"Worth: {item.worth} | "
+                    f"Attack +{item.melee_attack} | "
+                    f"Range +{item.melee_size} | "
                 )
                 item_surface = small_font.render(text, True, color)
                 stats_surface = small_font.render(stats, True, (180, 180, 180))
@@ -320,6 +320,9 @@ def game_loop(player):
     player.inventory.append(generate_ranged_arm())
     player.inventory.append(generate_ranged_arm())
     player.inventory.append(generate_ranged_arm())
+    player.inventory.append(generate_melee_arm())
+    player.inventory.append(generate_melee_arm())
+    player.inventory.append(generate_melee_arm())
 
     dt = 0
     running = True

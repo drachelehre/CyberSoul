@@ -3,6 +3,7 @@ import math
 from entity import *
 from constants import *
 from rangedarm import *
+from meleearm import *
 from shot import *
 from melee import *
 
@@ -19,25 +20,17 @@ class Player(Entity):
         self.health_max = 100
         self.health = self.health_max
         self.ranged_attack = 2
-        self.ranged_bonus = 0
-        self.total_ranged = self.ranged_attack + self.ranged_bonus
         self.melee_attack = 2
-        self.melee_bonus = 0
-        self.total_melee = self.melee_attack + self.melee_bonus
         self.defense = 1
-        self.armor_bonus = 0
         self.speed = PLAYER_BASE_SPEED
-        self.speed_bonus = 0
         self.humanity = 1000
         self.rotation = 0
         self.add(*self.containers)
         self.timer = 0
         self.credits = 0
         self.shoot_range = SHOT_BASE_RANGE
-        self.shoot_bonus = 0
         self.shot_rate = 1.5
         self.melee_size = MELEE_BASE_SIZE
-        self.melee_size_bonus = 0
         self.melee_rate = MELEE_SWIPE_RATE
         self.chip = None
         self.eye = None
@@ -90,17 +83,24 @@ class Player(Entity):
         if isinstance(part, RangedArm):
             # Remove bonuses from currently equipped ranged arm and put back in inventory
             if self.r_arm:
-                self.ranged_bonus -= self.r_arm.ranged_bonus
-                self.shoot_bonus -= self.r_arm.shoot_bonus
                 self.inventory.append(self.r_arm)
 
             # Equip new part
             self.r_arm = part
-            self.ranged_bonus += part.ranged_bonus
-            self.shoot_bonus += part.shoot_bonus
+            self.ranged_attack = part.ranged_attack
+            self.shoot_range = part.shoot_range
             self.shot_rate = self.r_arm.rate
 
-        # TODO: elif isinstance(part, MeleeArm): ...
+        elif isinstance(part, MeleeArm):
+            # Remove bonuses from currently equipped ranged arm and put back in inventory
+            if self.r_arm:
+                self.inventory.append(self.r_arm)
+
+            # Equip new part
+            self.r_arm = part
+            self.melee_attack = part.melee_attack
+            self.melee_size = part.melee_size
+
         # TODO: elif isinstance(part, ChestArmor): ...
         # TODO: add other types here
 
@@ -152,7 +152,7 @@ class Player(Entity):
             self.position.x,
             self.position.y,
             velocity,
-            self.shoot_range + self.shoot_bonus
+            self.shoot_range
         )
 
         shot.add(*Shot.containers)
