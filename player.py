@@ -70,36 +70,26 @@ class Player(Entity):
         return forward * PLAYER_BASE_SPEED * dt
 
     def equip(self, part):
-        """
-        Equip a Part object, deduct humanity, and apply its bonuses.
-        Old part bonuses are removed but humanity is never refunded.
-        """
-        # Humanity cost is paid immediately
-        self.humanity -= part.cost
-        if self.humanity < 0:
-            self.humanity = 0  # just to avoid going negative
 
-        # Equip based on type
+        self.humanity -= part.cost
+
         if isinstance(part, RangedArm):
-            # Remove bonuses from currently equipped ranged arm and put back in inventory
             if self.r_arm:
                 self.inventory.append(self.r_arm)
-
-            # Equip new part
             self.r_arm = part
             self.ranged_attack = part.ranged_attack
             self.shoot_range = part.shoot_range
-            self.shot_rate = self.r_arm.rate
+            self.shot_rate = part.rate
 
         elif isinstance(part, MeleeArm):
-            # Remove bonuses from currently equipped ranged arm and put back in inventory
-            if self.r_arm:
-                self.inventory.append(self.r_arm)
-
-            # Equip new part
-            self.r_arm = part
+            if self.m_arm:
+                self.inventory.append(self.m_arm)
+            self.m_arm = part
             self.melee_attack = part.melee_attack
             self.melee_size = part.melee_size
+
+        else:
+            self.inventory.append(part)
 
         # TODO: elif isinstance(part, ChestArmor): ...
         # TODO: add other types here
@@ -148,9 +138,12 @@ class Player(Entity):
         direction = pygame.Vector2(1, 0).rotate(self.rotation)
         velocity = direction * PLAYER_SHOOT_SPEED
 
+        offset_distance = 12  # adjust to match your player shape
+        spawn_pos = self.position + direction * offset_distance
+
         shot = Shot(
-            self.position.x,
-            self.position.y,
+            spawn_pos.x,
+            spawn_pos.y,
             velocity,
             self.shoot_range
         )

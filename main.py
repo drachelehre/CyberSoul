@@ -307,22 +307,18 @@ def game_loop(player):
     drawable = pygame.sprite.Group()
     shots = pygame.sprite.Group()
     melee = pygame.sprite.Group()
+    enemy_group = pygame.sprite.Group()
 
     Player.containers = (updatable, drawable)
-    BattleField.containers = updatable
+    BattleField.containers = (updatable,)
     Shot.containers = (shots, updatable, drawable)
     Melee.containers = (melee, updatable, drawable)
+    Enemy.containers = (enemy_group, updatable, drawable)
 
     player.add(*Player.containers)  # make sure player is in groups
     crosshair = Crosshair()
     field = BattleField(player)
 
-    player.inventory.append(generate_ranged_arm())
-    player.inventory.append(generate_ranged_arm())
-    player.inventory.append(generate_ranged_arm())
-    player.inventory.append(generate_melee_arm())
-    player.inventory.append(generate_melee_arm())
-    player.inventory.append(generate_melee_arm())
 
     dt = 0
     running = True

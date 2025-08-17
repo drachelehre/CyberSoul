@@ -16,6 +16,13 @@ ranged_arms = {
 
 # name: worth, cost, melee_attack, melee_size
 melee_arms = {
-    "dagger": [100, 5, 5, 40],
-    "gladius": [250, 7, 12, 70]
+    "dagger": [100, 5, 5, 20],
+    "gladius": [250, 7, 12, 25],
+    "scimitar": [400, 12, 18, 30]
+}
+
+enemies = {
+    "grunt": (12, 50, 0, 0, 5, 2, 60),   # size, health, ranged_atk, ranged_rate, melee_atk, defense, speed
+    "archer": (14, 40, 8, 1.2, 2, 1, 50),
+    "tank": (20, 200, 0, 0, 15, 10, 25),
 }

@@ -3,6 +3,8 @@ from lists import *
 from parts import *
 from rangedarm import *
 from meleearm import *
+from player import *
+from enemy import *
 
 
 def random_condition():
@@ -34,3 +36,21 @@ def generate_melee_arm():
     part.name = name
     part.melee_adjust()
     return part
+
+
+def generate_enemy(player):
+    name, stats = random.choice(list(enemies.items()))
+    size, health, ranged_attack, ranged_rate, melee_attack, defense, speed = stats
+
+    edges = [
+        lambda: (-ENEMY_MAX_SIZE, random.randint(0, SCREEN_HEIGHT)),
+        lambda: (SCREEN_WIDTH + ENEMY_MAX_SIZE, random.randint(0, SCREEN_HEIGHT)),
+        lambda: (random.randint(0, SCREEN_WIDTH), -ENEMY_MAX_SIZE),
+        lambda: (random.randint(0, SCREEN_WIDTH), SCREEN_HEIGHT + ENEMY_MAX_SIZE),
+    ]
+
+    x, y = random.choice(edges)()
+
+    enemy = Enemy(player, x, y, size, health, ranged_attack, ranged_rate, melee_attack, defense, speed)
+    enemy.name = name
+    return enemy
