@@ -6,12 +6,14 @@ import pygame
 class Shot(Entity):
     containers = ()
 
-    def __init__(self, x, y, velocity, max_distance):
+
+    def __init__(self, x, y, velocity, max_distance, owner):
         super().__init__(x, y, SHOT_RADIUS)
         self.radius = SHOT_RADIUS
         self.velocity = velocity
         self.distance_traveled = 0
         self.max_distance = max_distance
+        self.owner = owner  # <-- Player or Enemy
 
     def draw(self, screen):
         pygame.draw.circle(screen, "white", self.position, self.radius, 2)

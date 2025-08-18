@@ -231,7 +231,7 @@ def game_over(screen):
     font = pygame.font.Font(None, 74)
     small_font = pygame.font.Font(None, 36)
     game_over_note = font.render("Game OVER", True, (255, 255, 255))
-    bad_end_hum = small_font.render("You lost yourself to the machine", True, (200, 200, 200))
+    bad_end_hum = small_font.render("You lost to the machine", True, (200, 200, 200))
     screen.fill((0, 0, 0))
     screen.blit(game_over_note, (SCREEN_WIDTH // 2 - game_over_note.get_width() // 2, 150))
     screen.blit(bad_end_hum, (SCREEN_WIDTH // 2 - bad_end_hum.get_width() // 2, 300))
@@ -319,7 +319,6 @@ def game_loop(player):
     crosshair = Crosshair()
     field = BattleField(player)
 
-
     dt = 0
     running = True
     while running:
@@ -328,8 +327,8 @@ def game_loop(player):
                 running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:  # pause menu
-                    choice = pause_menu(screen, player)
-                    if choice == "quit":
+                    selection = pause_menu(screen, player)
+                    if selection == "quit":
                         return  # quit to main menu
                 if event.key == pygame.K_i:
                     inventory_menu(screen, player)
@@ -342,8 +341,36 @@ def game_loop(player):
             obj.draw(screen)
         crosshair.draw(screen)
 
-        if player.humanity <= 0:
+        if player.humanity <= 0 or player.health <= 0:
             game_over(screen)
+
+        # Player shots hit enemies
+        for shot in shots:
+            if isinstance(shot.owner, Player):
+                hits = pygame.sprite.spritecollide(shot, enemy_group, False)
+                for enemy in hits:
+                    enemy.health -= shot.owner.ranged_attack
+                    shot.kill()
+
+        # Enemy shots hit player
+        for shot in shots:
+            if isinstance(shot.owner, Enemy):
+                if player.rect.colliderect(shot.rect):
+                    player.health -= max(1, shot.owner.ranged_attack - player.defense)
+                    shot.kill()
+
+        # Player melee hits enemies
+        for m in melee:
+            if isinstance(m.owner, Player):
+                hits = pygame.sprite.spritecollide(m, enemy_group, False)
+                for enemy in hits:
+                    enemy.health -= m.owner.melee_attack
+
+        # Enemy melee hits player
+        for m in melee:
+            if isinstance(m.owner, Enemy):
+                if player.rect.colliderect(m.rect):
+                    player.health -= max(1, m.owner.melee_attack - player.defense)
 
         pygame.display.flip()
         dt = clock.tick(60) / 1000

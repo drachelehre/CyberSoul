@@ -9,19 +9,22 @@ class BattleField(pygame.sprite.Sprite):
     containers = ()
 
     def __init__(self, player):
-        # Unpack containers tuple when adding to sprite groups
         pygame.sprite.Sprite.__init__(self, *self.containers)
         self.player = player
+
+        # Set the first spawn time randomly between 3 and 10 seconds
+        self.next_spawn_time = random.uniform(3, 10)
         self.spawn_timer = 0.0
 
     def spawn(self):
-        # Generate enemy and automatically add it to Enemy.containers groups
         enemy = generate_enemy(self.player)
         return enemy
 
     def update(self, dt):
         self.spawn_timer += dt
-        if self.spawn_timer >= ENEMY_SPAWN_MAX:
+
+        if self.spawn_timer >= self.next_spawn_time:
             self.spawn_timer = 0
+            self.next_spawn_time = random.uniform(3, 10)  # pick next spawn time
             self.spawn()
 

@@ -6,7 +6,8 @@ from entity import *
 class Enemy(Entity):
     containers = ()
 
-    def __init__(self, player, x, y, size, health, ranged_attack, ranged_rate, melee_attack, defense, speed):
+    def __init__(self, player, x, y, size, health, ranged_attack, ranged_rate, shoot_range,
+                 melee_attack, defense, speed):
         super().__init__(x, y, size)
         self.x = x
         self.y = y
@@ -14,11 +15,15 @@ class Enemy(Entity):
         self.player = player
         self.health = health
         self.ranged_attack = ranged_attack
-        self.ranged_rate = ranged_rate
+        self.shot_rate = ranged_rate
+        self.shoot_range = shoot_range
         self.melee_attack = melee_attack
         self.defense = defense
         self.speed = speed
         self.rotation = 0
+        self.timer = 0.0
+
+
 
     def enemy_shape(self):
         points = [
@@ -46,31 +51,50 @@ class Enemy(Entity):
         pygame.draw.polygon(screen, "red", self.enemy_shape())
 
     def update(self, dt):
-        if not self.player:
-            return  # safety check
+        player_pos = self.player.position
+        enemy_pos = self.position
 
-        # current enemy position as Vector2
-        enemy_pos = pygame.Vector2(self.x, self.y)
-        # player position as Vector2
-        player_pos = pygame.Vector2(self.player.x, self.player.y)
-
-        # vector pointing from enemy to player
         direction_vector = player_pos - enemy_pos
-
         if direction_vector.length() > 0:
-            # normalize to get direction only
             direction_vector = direction_vector.normalize()
-
-            # move enemy toward player
             enemy_pos += direction_vector * self.speed * dt
-
-            # update Enemy coordinates
-            self.x, self.y = enemy_pos.x, enemy_pos.y
-            self.position.x, self.position.y = self.x, self.y
+            self.position = enemy_pos
+            self.x, self.y = self.position.x, self.position.y
 
             # rotate to face the player
             self.rotation = direction_vector.angle_to(pygame.Vector2(1, 0))
-            self.position.x, self.position.y = self.x, self.y
 
-            # Update rotation so enemy faces the player
-            self.rotation = direction_vector.angle_to(pygame.Vector2(1, 0))
+        # --- NEW: decide to shoot ---
+        self.shoot(dt)
+
+    def shoot(self, dt):
+        if not hasattr(self, "timer"):
+            self.timer = 0
+        if self.timer > 0:
+            self.timer -= dt
+            return
+
+        # distance to player
+        to_player = self.player.position - self.position
+        dist = to_player.length()
+
+        # only fire if in range
+        if dist <= self.shoot_range:
+            direction = to_player.normalize()
+            velocity = direction * PLAYER_SHOOT_SPEED
+
+            spawn_pos = self.position + direction * 12  # muzzle offset
+
+            shot = Shot(
+                spawn_pos.x,
+                spawn_pos.y,
+                velocity,
+                self.shoot_range,
+                self  # owner
+            )
+            shot.add(*Shot.containers)
+
+            self.timer = self.shot_rate  # cooldown
+
+
+

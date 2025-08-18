@@ -12,10 +12,28 @@ class Entity(pygame.sprite.Sprite):
         self.velocity = pygame.Vector2(0, 0)
         self.size = size
 
-    def draw(self, screen):
-        # sub-classes must override
-        pass
+        # bounding box for collisions
+        self.rect = pygame.Rect(0, 0, size * 2, size * 2)
+        self.rect.center = (x, y)
+
+        # who I collide with
+        self.collision_groups = []
+
+    def update_rect(self):
+        self.rect.center = (round(self.position.x), round(self.position.y))
 
     def update(self, dt):
-        # sub-classes must override
+        self.update_rect()
+        self.check_collisions()
+
+    def check_collisions(self):
+        """Check collisions with registered groups"""
+        for group in self.collision_groups:
+            hits = pygame.sprite.spritecollide(self, group, False)
+            for target in hits:
+                if target is not self:
+                    self.on_collision(target)
+
+    def on_collision(self, other):
+        """Default behavior — override in subclasses"""
         pass

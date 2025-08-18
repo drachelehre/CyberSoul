@@ -145,7 +145,8 @@ class Player(Entity):
             spawn_pos.x,
             spawn_pos.y,
             velocity,
-            self.shoot_range
+            self.shoot_range,
+            self
         )
 
         shot.add(*Shot.containers)

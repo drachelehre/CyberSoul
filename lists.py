@@ -21,8 +21,9 @@ melee_arms = {
     "scimitar": [400, 12, 18, 30]
 }
 
+# name: size, health, ranged_atk, ranged_rate, shot_range,  melee_atk, defense, speed
 enemies = {
-    "grunt": (12, 50, 0, 0, 5, 2, 60),   # size, health, ranged_atk, ranged_rate, melee_atk, defense, speed
-    "archer": (14, 40, 8, 1.2, 2, 1, 50),
-    "tank": (20, 200, 0, 0, 15, 10, 25),
+    "grunt": (12, 50, 5, 3, 100, 0, 0, 40),
+    "archer": (14, 40, 8, 1.2, 200, 0, 0, 50),
+    "tank": (20, 200, 0, 0, 0, 15, 10, 25),
 }

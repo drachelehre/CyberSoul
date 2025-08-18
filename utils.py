@@ -40,7 +40,7 @@ def generate_melee_arm():
 
 def generate_enemy(player):
     name, stats = random.choice(list(enemies.items()))
-    size, health, ranged_attack, ranged_rate, melee_attack, defense, speed = stats
+    size, health, ranged_attack, ranged_rate, shot_range, melee_attack, defense, speed = stats
 
     edges = [
         lambda: (-ENEMY_MAX_SIZE, random.randint(0, SCREEN_HEIGHT)),
@@ -51,6 +51,7 @@ def generate_enemy(player):
 
     x, y = random.choice(edges)()
 
-    enemy = Enemy(player, x, y, size, health, ranged_attack, ranged_rate, melee_attack, defense, speed)
+    enemy = Enemy(player, x, y, size, health, ranged_attack, ranged_rate, shot_range,
+                  melee_attack, defense, speed)
     enemy.name = name
     return enemy
