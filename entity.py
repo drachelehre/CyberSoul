@@ -22,18 +22,10 @@ class Entity(pygame.sprite.Sprite):
     def update_rect(self):
         self.rect.center = (round(self.position.x), round(self.position.y))
 
-    def update(self, dt):
-        self.update_rect()
-        self.check_collisions()
-
-    def check_collisions(self):
-        """Check collisions with registered groups"""
-        for group in self.collision_groups:
-            hits = pygame.sprite.spritecollide(self, group, False)
-            for target in hits:
-                if target is not self:
-                    self.on_collision(target)
+    def collides_with(self, other):
+        """Return True if this entity's rect overlaps with another's"""
+        return self.rect.colliderect(other.rect)
 
     def on_collision(self, other):
-        """Default behavior — override in subclasses"""
+        """Override in subclasses to define behavior"""
         pass

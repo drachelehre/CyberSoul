@@ -1,11 +1,12 @@
+
 from entity import *
 from constants import *
 import pygame
 
 
+
 class Shot(Entity):
     containers = ()
-
 
     def __init__(self, x, y, velocity, max_distance, owner):
         super().__init__(x, y, SHOT_RADIUS)
@@ -24,4 +25,16 @@ class Shot(Entity):
         self.distance_traveled += move_amount.length()
 
         if self.distance_traveled >= self.max_distance:
+            self.kill()
+        else:
+            self.update_rect()
+
+    def on_collision(self, other):
+        from player import Player  # local import avoids circular import
+        from enemy import Enemy  # same idea
+        if isinstance(self.owner, Player) and isinstance(other, Enemy):
+            other.health -= self.owner.ranged_attack
+            self.kill()
+        elif isinstance(self.owner, Enemy) and isinstance(other, Player):
+            other.health -= max(1, self.owner.ranged_attack - other.defense)
             self.kill()

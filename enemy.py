@@ -63,9 +63,11 @@ class Enemy(Entity):
 
             # rotate to face the player
             self.rotation = direction_vector.angle_to(pygame.Vector2(1, 0))
+            self.update_rect()
 
         # --- NEW: decide to shoot ---
         self.shoot(dt)
+
 
     def shoot(self, dt):
         if not hasattr(self, "timer"):

@@ -127,6 +127,8 @@ class Player(Entity):
         if pygame.mouse.get_pressed()[2]:
             self.melee(dt)
 
+        self.update_rect()
+
     def shoot(self, dt):
         if self.timer > 0:
             self.timer -= dt

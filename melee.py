@@ -20,6 +20,7 @@ class Melee(Entity):
         self.elapsed += dt
         if self.elapsed >= self.lifetime:
             self.kill()
+        self.update_rect()
 
     def draw(self, surface):
         # Always use the current equipped melee arm size
