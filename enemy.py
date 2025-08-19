@@ -68,7 +68,6 @@ class Enemy(Entity):
         # --- NEW: decide to shoot ---
         self.shoot(dt)
 
-
     def shoot(self, dt):
         if not hasattr(self, "timer"):
             self.timer = 0
@@ -83,7 +82,7 @@ class Enemy(Entity):
         # only fire if in range
         if dist <= self.shoot_range:
             direction = to_player.normalize()
-            velocity = direction * PLAYER_SHOOT_SPEED
+            velocity = direction * ENEMY_SHOOT_SPEED
 
             spawn_pos = self.position + direction * 12  # muzzle offset
 

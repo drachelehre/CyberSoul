@@ -6,6 +6,7 @@ from rangedarm import *
 from meleearm import *
 from shot import *
 from melee import *
+from chest import *
 
 
 class Player(Entity):
@@ -19,7 +20,7 @@ class Player(Entity):
         self.y = y
         self.health_max = 100
         self.health = self.health_max
-        self.ranged_attack = 2
+        self.ranged_attack = 5
         self.melee_attack = 2
         self.defense = 1
         self.speed = PLAYER_BASE_SPEED
@@ -32,8 +33,10 @@ class Player(Entity):
         self.shot_rate = 1.5
         self.melee_size = MELEE_BASE_SIZE
         self.melee_rate = MELEE_SWIPE_RATE
+        self.regenerate = 0
+        self.regen_timer = 0
+        self.regen_rate = 5
         self.chip = None
-        self.eye = None
         self.r_arm = None
         self.m_arm = None
         self.chest = None
@@ -87,6 +90,12 @@ class Player(Entity):
             self.m_arm = part
             self.melee_attack = part.melee_attack
             self.melee_size = part.melee_size
+
+        elif isinstance(part, Chest):
+            if self.chest:
+                self.inventory.append(self.chest)
+            self.chest = part
+            self.defense = part.defense
 
         else:
             self.inventory.append(part)
@@ -166,3 +175,14 @@ class Player(Entity):
         melee_attack.add(*Melee.containers)
 
         self.timer = self.melee_rate
+
+    def regen(self, dt):
+        if self.regen_timer > 0:
+            self.regen_timer -= dt
+            return
+
+        self.health += self.regenerate
+        if self.health > self.health_max:
+            self.health = self.health_max
+
+        self.regen_timer = self.regen_rate

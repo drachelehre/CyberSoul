@@ -3,6 +3,7 @@ from lists import *
 from parts import *
 from rangedarm import *
 from meleearm import *
+from chest import *
 from player import *
 from enemy import *
 
@@ -37,6 +38,15 @@ def generate_melee_arm():
     part.melee_adjust()
     return part
 
+def generate_chest_armor():
+    name, stats = random.choice(list(chest_armor.items()))
+    worth, cost, defense = stats
+    cond = random_condition()
+    part = Chest(cond, worth, cost, defense)
+    part.name = name
+    part.chest_adjust()
+    return part
+
 
 def generate_enemy(player):
     name, stats = random.choice(list(enemies.items()))
@@ -55,3 +65,20 @@ def generate_enemy(player):
                   melee_attack, defense, speed)
     enemy.name = name
     return enemy
+
+
+def money_drop(player):
+    player.credits += random.randint(10, 201)
+
+def generate_random_part():
+    random_parts = [generate_ranged_arm(), generate_melee_arm(), generate_chest_armor()]
+    return random.choice(random_parts)
+
+def part_drop():
+    drop = False
+    drop_chance = 15
+    roll = random.randint(1, 100)
+    if roll <= drop_chance:
+        drop = True
+        return generate_random_part(), drop
+    return None, drop

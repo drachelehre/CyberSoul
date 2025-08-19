@@ -36,8 +36,10 @@ def save_game(player):
         "credits": player.credits,
         "shoot_range": player.shoot_range,
         "melee_size": player.melee_size,
+        "regenerate": player.regenerate,
+        "regen_timer": player.regen_timer,
+        "regen_rate": player.regen_timer,
         "chip": player.chip,
-        "eye": player.eye,
         "r_arm": player.r_arm,
         "m_arm": player.m_arm,
         "chest": player.chest,
@@ -74,8 +76,10 @@ def load_game(name):
     player.credits = data["credits"]
     player.shoot_range = data["shoot_range"]
     player.melee_size = data["melee_size"]
+    player.regenerate = data["regenerate"]
+    player.regen_timer = data['regen_timer']
+    player.regen_rate = data["regen_rate"]
     player.chip = data["chip"]
-    player.eye = data["eye"]
     player.r_arm = data["r_arm"]
     player.m_arm = data["m_arm"]
     player.chest = data["chest"]
@@ -89,6 +93,7 @@ def load_game(name):
 def inventory_menu(screen, player):
     font = pygame.font.Font(None, 48)
     small_font = pygame.font.Font(None, 24)
+    inv_font = pygame.font.Font(None, 16)
 
     clock = pygame.time.Clock()
     selected_index = 0
@@ -140,23 +145,36 @@ def inventory_menu(screen, player):
                     f"Rate {item.rate} | "
                     f"Cost {item.cost} humanity"
                 )
-                item_surface = small_font.render(text, True, color)
-                stats_surface = small_font.render(stats, True, (180, 180, 180))
+                item_surface = inv_font.render(text, True, color)
+                stats_surface = inv_font.render(stats, True, (180, 180, 180))
 
-                screen.blit(item_surface, (50, 150 + i * 60))
-                screen.blit(stats_surface, (70, 180 + i * 60))
+                screen.blit(item_surface, (50, 120 + i * 45))
+                screen.blit(stats_surface, (70, 140 + i * 45))
             elif isinstance(item, MeleeArm):
                 text = f"{item.condition} {item.name}"
                 stats = (
                     f"Worth: {item.worth} | "
                     f"Attack +{item.melee_attack} | "
                     f"Range +{item.melee_size} | "
+                    f"Cost {item.cost} humanity"
                 )
-                item_surface = small_font.render(text, True, color)
-                stats_surface = small_font.render(stats, True, (180, 180, 180))
+                item_surface = inv_font.render(text, True, color)
+                stats_surface = inv_font.render(stats, True, (180, 180, 180))
 
-                screen.blit(item_surface, (50, 150 + i * 60))
-                screen.blit(stats_surface, (70, 180 + i * 60))
+                screen.blit(item_surface, (50, 120 + i * 45))
+                screen.blit(stats_surface, (70, 140 + i * 45))
+            elif isinstance(item, Chest):
+                text = f"{item.condition} {item.name}"
+                stats = (
+                    f"Worth: {item.worth} | "
+                    f"Defense {item.defense} | "
+                    f"Cost {item.cost} humanity"
+                )
+                item_surface = inv_font.render(text, True, color)
+                stats_surface = inv_font.render(stats, True, (180, 180, 180))
+
+                screen.blit(item_surface, (50, 120 + i * 45))
+                screen.blit(stats_surface, (70, 140 + i * 45))
             else:
                 text = f"{item.__class__.__name__} ({item.condition})"
                 item_surface = small_font.render(text, True, color)
@@ -321,6 +339,12 @@ def game_loop(player):
 
     dt = 0
     running = True
+
+    # --- initialize drop notification ONCE ---
+    drop_text = None
+    drop_text_timer = 0
+    drop_font = pygame.font.Font(None, 24)
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -333,6 +357,8 @@ def game_loop(player):
                 if event.key == pygame.K_i:
                     inventory_menu(screen, player)
 
+        small_font = pygame.font.Font(None, 24)
+
         for obj in updatable:
             obj.update(dt)
 
@@ -340,6 +366,14 @@ def game_loop(player):
         for obj in drawable:
             obj.draw(screen)
         crosshair.draw(screen)
+
+        # Show current and maximum hp
+        health_text = small_font.render(f"Health: {player.health}/{player.health_max}", True, (255, 180, 180))
+        screen.blit(health_text, (SCREEN_WIDTH//7 - health_text.get_width() + 20, 10))
+
+        # Show current credit amount
+        credits_text = small_font.render(f"Credits: {player.credits}", True, (255, 180, 180))
+        screen.blit(credits_text, (SCREEN_WIDTH - credits_text.get_width() - 20, 10))
 
         if player.humanity <= 0 or player.health <= 0:
             game_over(screen)
@@ -372,8 +406,26 @@ def game_loop(player):
                 if player.rect.colliderect(m.rect):
                     player.health -= max(1, m.owner.melee_attack - player.defense)
 
+        # --- ENEMY DEATH & DROP CHECK ---
+        for e in enemy_group:
+            if e.health <= 0:
+                e.kill()
+                money_drop(player)
+                part, dropped = part_drop()
+                if dropped:
+                    player.inventory.append(part)
+                    drop_text = drop_font.render(f"{part.name} dropped!", True, (255, 255, 0))
+                    drop_text_timer = pygame.time.get_ticks() + 5000  # show for 5s
+
+        # --- SHOW NOTIFICATION ---
+        if drop_text and pygame.time.get_ticks() < drop_text_timer:
+            screen.blit(drop_text, (SCREEN_WIDTH // 2 - drop_text.get_width() // 2, 450))
+        else:
+            drop_text = None
+
         pygame.display.flip()
         dt = clock.tick(60) / 1000
+
 
 
 def main():
