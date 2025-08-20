@@ -44,9 +44,6 @@ def save_game(player):
         "m_arm": player.m_arm,
         "chest": player.chest,
         "leg": player.leg,
-        "resistance": player.resistance,
-        "immunity": player.immunity,
-        "vulnerability": player.vulnerability,
         "inventory": player.inventory
     }
 
@@ -106,6 +103,8 @@ def inventory_menu(screen, player):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE or event.key == pygame.K_r:
                     return
+                elif event.key == pygame.K_s:
+                    status_screen(screen, player)
                 elif event.key == pygame.K_DOWN:
                     selected_index = (selected_index + 1) % min(ITEMS_PER_PAGE, len(player.inventory) - page * ITEMS_PER_PAGE)
                 elif event.key == pygame.K_UP:
@@ -243,7 +242,64 @@ def get_player_name(screen, prompt="Enter player name:"):
         clock.tick(60)
 
 def status_screen(screen, player):
-    pass
+    title_font = pygame.font.Font(None, 48)
+    section_font = pygame.font.Font(None, 36)
+    item_font = pygame.font.Font(None, 24)
+    exit_font = pygame.font.Font(None, 20)
+    clock = pygame.time.Clock()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit(); exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key in (pygame.K_ESCAPE, pygame.K_r):
+                    return
+                elif event.key == pygame.K_s:
+                    inventory_menu(screen, player)
+
+        screen.fill((0, 0, 0))
+
+        # Title
+        title_text = title_font.render("Status", True, (255, 255, 255))
+        screen.blit(title_text, (SCREEN_WIDTH // 2 - title_text.get_width() // 2, 40))
+
+        # Column headers
+        equip_text = section_font.render("Equipment", True, (255, 255, 255))
+        stats_text = section_font.render("Stats", True, (255, 255, 255))
+
+        left_x = SCREEN_WIDTH // 6
+        right_x = SCREEN_WIDTH // 2 + 50
+        top_y = 100
+
+        screen.blit(equip_text, (left_x, top_y))
+        screen.blit(stats_text, (right_x, top_y))
+
+        # Equipment list (left column)
+        y = top_y + 0
+        for label, attr in EQUIPMENT_SLOTS:
+            item = getattr(player, attr, None)
+            item_name = item.name if item else "None"
+            text = item_font.render(f"{label}: {item_name}", True, (200, 200, 200))
+            screen.blit(text, (left_x, y))
+            y += 30
+
+        # Stats list (right column)
+        y = top_y + 30
+        for label, attr in PLAYER_STATS:
+            value = getattr(player, attr, "N/A")
+            text = item_font.render(f"{label}: {value}", True, (200, 200, 200))
+            screen.blit(text, (right_x, y))
+            y += 30
+
+        # Exit hint
+        exit_text = exit_font.render("Press Esc or R to go back", True, (255, 255, 255))
+        screen.blit(exit_text, (20, SCREEN_HEIGHT - 40))
+
+        pygame.display.flip()
+        clock.tick(60)
+
+
 
 def game_over(screen):
     font = pygame.font.Font(None, 74)
@@ -263,6 +319,7 @@ def main_menu(screen):
     start_text = small_font.render("Press ENTER to Start New Game", True, (200, 200, 200))
     load_text = small_font.render("Press L to Load Game", True, (200, 200, 200))
     quit_text = small_font.render("Press ESC to Quit", True, (200, 200, 200))
+
 
     clock = pygame.time.Clock()
     while True:
@@ -340,7 +397,7 @@ def game_loop(player):
     dt = 0
     running = True
 
-    # --- initialize drop notification ONCE ---
+    # drop notification initialization
     drop_text = None
     drop_text_timer = 0
     drop_font = pygame.font.Font(None, 24)
@@ -354,8 +411,11 @@ def game_loop(player):
                     selection = pause_menu(screen, player)
                     if selection == "quit":
                         return  # quit to main menu
-                if event.key == pygame.K_i:
+                if event.key == pygame.K_r:
                     inventory_menu(screen, player)
+                if event.key == pygame.K_c:
+                    status_screen(screen, player)
+
 
         small_font = pygame.font.Font(None, 24)
 
@@ -406,7 +466,7 @@ def game_loop(player):
                 if player.rect.colliderect(m.rect):
                     player.health -= max(1, m.owner.melee_attack - player.defense)
 
-        # --- ENEMY DEATH & DROP CHECK ---
+        # Enemy death/drop check
         for e in enemy_group:
             if e.health <= 0:
                 e.kill()
@@ -417,7 +477,7 @@ def game_loop(player):
                     drop_text = drop_font.render(f"{part.name} dropped!", True, (255, 255, 0))
                     drop_text_timer = pygame.time.get_ticks() + 5000  # show for 5s
 
-        # --- SHOW NOTIFICATION ---
+        # Drop Notification
         if drop_text and pygame.time.get_ticks() < drop_text_timer:
             screen.blit(drop_text, (SCREEN_WIDTH // 2 - drop_text.get_width() // 2, 450))
         else:

@@ -37,3 +37,27 @@ enemies = {
     "archer": (14, 20, 8, 1.2, 200, 0, 0, 50),
     "tank": (20, 200, 0, 0, 0, 15, 10, 25),
 }
+
+PLAYER_STATS = [
+        ("Max Health", "health_max"),
+        ("Health", "health"),
+        ("Ranged Attack", "ranged_attack"),
+        ("Fire Range", "shoot_range"),
+        ("Fire Rate", "shoot_rate"),
+        ("Melee Attack", "melee_attack"),
+        ("Melee Size", "melee_size"),
+        ("Melee Rate", "melee_rate"),
+        ("Defense", "defense"),
+        ("Speed", "speed"),
+        ("Regeneration", "regenerate"),
+        ("Regen Rate", "regen_rate")
+    ]
+
+EQUIPMENT_SLOTS = [
+        ("Right Arm", "r_arm"),
+        ("Melee Arm", "m_arm"),
+        ("Chest", "chest"),
+        ("Legs", "leg"),
+        ("Chip", "chip"),
+    ]
+

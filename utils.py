@@ -76,7 +76,7 @@ def generate_random_part():
 
 def part_drop():
     drop = False
-    drop_chance = 15
+    drop_chance = 30
     roll = random.randint(1, 100)
     if roll <= drop_chance:
         drop = True
