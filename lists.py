@@ -21,7 +21,7 @@ melee_arms = {
     "gladius": [250, 7, 12, 25],
     "scimitar": [400, 12, 18, 30]
 }
-# name: name: worth, cost, defense
+# name: worth, cost, defense
 chest_armor = {
     "aluminum armor": [20, 5, 2],
     "iron armor": [40, 5, 5],
@@ -29,6 +29,14 @@ chest_armor = {
     "steel armor": [500, 20, 25],
     "titanium armor": [2000, 40, 50],
     "tungsten armor": [5000, 100, 200]
+}
+
+# name: worth, cost, speed
+leg_mods = {
+    "athletic springs": [15, 5, 60],
+    "pneumatic knees": [180, 8, 70],
+    "deployable skates": [1250, 15, 100],
+    "rocket sleds": [4000, 25, 150]
 }
 
 # name: size, health, ranged_atk, ranged_rate, shot_range,  melee_atk, defense, speed
@@ -43,7 +51,7 @@ PLAYER_STATS = [
         ("Health", "health"),
         ("Ranged Attack", "ranged_attack"),
         ("Fire Range", "shoot_range"),
-        ("Fire Rate", "shoot_rate"),
+        ("Fire Rate", "shot_rate"),
         ("Melee Attack", "melee_attack"),
         ("Melee Size", "melee_size"),
         ("Melee Rate", "melee_rate"),
@@ -60,4 +68,5 @@ EQUIPMENT_SLOTS = [
         ("Legs", "leg"),
         ("Chip", "chip"),
     ]
+
 

@@ -4,6 +4,7 @@ from parts import *
 from rangedarm import *
 from meleearm import *
 from chest import *
+from legs import *
 from player import *
 from enemy import *
 
@@ -47,6 +48,15 @@ def generate_chest_armor():
     part.chest_adjust()
     return part
 
+
+def generate_leg_mod():
+    name, stats = random.choice(list(leg_mods.items()))
+    worth, cost, speed = stats
+    cond = random_condition()
+    part = Legs(cond, worth, cost, speed)
+    part.name = name
+    part.legs_adjust()
+    return part
 
 def generate_enemy(player):
     name, stats = random.choice(list(enemies.items()))

@@ -14,6 +14,14 @@ from melee import *
 
 SAVE_FOLDER = "saves"
 
+ITEM_CLASSES = {
+    "RangedArm": RangedArm,
+    "MeleeArm": MeleeArm,
+    "Chest": Chest,
+    "Leg": Leg,
+    "Chip": Chip
+    # add others here
+}
 
 def save_game(player):
     if not os.path.exists(SAVE_FOLDER):
@@ -35,16 +43,17 @@ def save_game(player):
         "rotation": player.rotation,
         "credits": player.credits,
         "shoot_range": player.shoot_range,
+        "shot_rate": player.shot_rate,
         "melee_size": player.melee_size,
         "regenerate": player.regenerate,
         "regen_timer": player.regen_timer,
         "regen_rate": player.regen_timer,
-        "chip": player.chip,
-        "r_arm": player.r_arm,
-        "m_arm": player.m_arm,
-        "chest": player.chest,
-        "leg": player.leg,
-        "inventory": player.inventory
+        "chip": player.chip.to_dict() if player.chip else None,
+        "r_arm": player.r_arm.to_dict() if player.r_arm else None,
+        "m_arm": player.m_arm.to_dict() if player.m_arm else None,
+        "chest": player.chest.to_dict() if player.chest else None,
+        "leg": player.leg.to_dict() if player.leg else None,
+        "inventory": [item.to_dict() for item in player.inventory]
     }
 
     with open(filename, "w") as f:
@@ -72,16 +81,26 @@ def load_game(name):
     player.rotation = data["rotation"]
     player.credits = data["credits"]
     player.shoot_range = data["shoot_range"]
+    player.shot_rate = data["shot_rate"]
     player.melee_size = data["melee_size"]
     player.regenerate = data["regenerate"]
     player.regen_timer = data['regen_timer']
     player.regen_rate = data["regen_rate"]
-    player.chip = data["chip"]
-    player.r_arm = data["r_arm"]
-    player.m_arm = data["m_arm"]
-    player.chest = data["chest"]
-    player.leg = data["leg"]
-    player.inventory = data["inventory"]
+
+    # equipment
+    def load_part(part_data):
+        if part_data is None:
+            return None
+        cls = ITEM_CLASSES.get(part_data["type"])
+        if cls:
+            return cls.from_dict(part_data)
+        return None
+
+    player.r_arm = load_part(data["r_arm"])
+    player.m_arm = load_part(data["m_arm"])
+    player.chest = load_part(data["chest"])
+    player.leg = load_part(data["leg"])
+    player.inventory = [load_part(item) for item in data["inventory"]]
 
     print(f"Game loaded from {filename}")
     return player
@@ -243,9 +262,9 @@ def get_player_name(screen, prompt="Enter player name:"):
 
 def status_screen(screen, player):
     title_font = pygame.font.Font(None, 48)
-    section_font = pygame.font.Font(None, 36)
-    item_font = pygame.font.Font(None, 24)
-    exit_font = pygame.font.Font(None, 20)
+    section_font = pygame.font.Font(None, 32)
+    item_font = pygame.font.Font(None, 22)
+    exit_font = pygame.font.Font(None, 18)
     clock = pygame.time.Clock()
 
     while True:
@@ -262,53 +281,67 @@ def status_screen(screen, player):
 
         # Title
         title_text = title_font.render("Status", True, (255, 255, 255))
-        screen.blit(title_text, (SCREEN_WIDTH // 2 - title_text.get_width() // 2, 40))
+        screen.blit(title_text, (750 // 2 - title_text.get_width() // 2, 30))
 
         # Column headers
         equip_text = section_font.render("Equipment", True, (255, 255, 255))
         stats_text = section_font.render("Stats", True, (255, 255, 255))
 
-        left_x = SCREEN_WIDTH // 6
-        right_x = SCREEN_WIDTH // 2 + 50
-        top_y = 100
+        left_x = 100      # equipment column start
+        right_x = 400     # stats column start
+        top_y = 90        # start just below title
 
         screen.blit(equip_text, (left_x, top_y))
         screen.blit(stats_text, (right_x, top_y))
 
         # Equipment list (left column)
-        y = top_y + 0
+        y = top_y + 40
         for label, attr in EQUIPMENT_SLOTS:
             item = getattr(player, attr, None)
             item_name = item.name if item else "None"
             text = item_font.render(f"{label}: {item_name}", True, (200, 200, 200))
             screen.blit(text, (left_x, y))
-            y += 30
+            y += 28  # line spacing
 
         # Stats list (right column)
-        y = top_y + 30
+        y = top_y + 40
         for label, attr in PLAYER_STATS:
             value = getattr(player, attr, "N/A")
             text = item_font.render(f"{label}: {value}", True, (200, 200, 200))
             screen.blit(text, (right_x, y))
-            y += 30
+            y += 28  # line spacing
 
         # Exit hint
         exit_text = exit_font.render("Press Esc or R to go back", True, (255, 255, 255))
-        screen.blit(exit_text, (20, SCREEN_HEIGHT - 40))
+        screen.blit(exit_text, (20, 480))
 
         pygame.display.flip()
         clock.tick(60)
 
 
 
+
 def game_over(screen):
     font = pygame.font.Font(None, 74)
     small_font = pygame.font.Font(None, 36)
-    game_over_note = font.render("Game OVER", True, (255, 255, 255))
+    load_font = pygame.font.Font(None, 24)
+    exit_font = pygame.font.Font(None, 20)
+    game_over_note = font.render("Game Over", True, (255, 255, 255))
     bad_end_hum = small_font.render("You lost to the machine", True, (200, 200, 200))
+    load_text = load_font.render("Press 'L' to load a file", True, "grey")
     screen.fill((0, 0, 0))
     screen.blit(game_over_note, (SCREEN_WIDTH // 2 - game_over_note.get_width() // 2, 150))
     screen.blit(bad_end_hum, (SCREEN_WIDTH // 2 - bad_end_hum.get_width() // 2, 300))
+    screen.blit(load_text, (SCREEN_WIDTH // 2 - load_text.get_width() // 2, 350))
+
+    exit_text = exit_font.render("Press q to go to main menu", True, (255, 255, 255))
+    screen.blit(exit_text, (20, 480))
+
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_q:
+                main_menu(screen)
+
 
 
 def main_menu(screen):

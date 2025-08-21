@@ -7,6 +7,8 @@ from meleearm import *
 from shot import *
 from melee import *
 from chest import *
+from legs import *
+from chip import *
 
 
 class Player(Entity):
@@ -97,11 +99,22 @@ class Player(Entity):
             self.chest = part
             self.defense = part.defense
 
+        elif isinstance(part, Legs):
+            if self.leg:
+                self.inventory.append(self.leg)
+            self.leg = part
+            self.speed = part.speed
+
+        elif isinstance(part, Chip):
+            if self.chip:
+                self.inventory.append(self.chip)
+            self.chip = part
+            self.melee_rate = part.melee_rate
+            self.regenerate = part.regenerate
+            self.regen_rate = part.regen_rate
+
         else:
             self.inventory.append(part)
-
-        # TODO: elif isinstance(part, ChestArmor): ...
-        # TODO: add other types here
 
         # Remove from inventory so it's not re-used
         if part in self.inventory:

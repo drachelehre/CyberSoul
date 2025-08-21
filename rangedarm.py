@@ -3,8 +3,9 @@ from lists import *
 
 
 class RangedArm(Part):
-    def __init__(self, condition, worth, cost, ranged_attack, shoot_range, rate):
+    def __init__(self, condition, worth, cost, ranged_attack, shoot_range, rate, name='RangedArm'):
         super().__init__(condition, worth, cost)
+        self.name = name
         self.ranged_attack = ranged_attack
         self.shoot_range = shoot_range
         self.rate = rate
@@ -40,3 +41,27 @@ class RangedArm(Part):
             self.ranged_attack = max(100, int(self.ranged_attack * 2))
             self.shoot_range = max(200, int(self.shoot_range * 2))
             self.rate = min(0.1, self.rate * 0.2)
+
+    def to_dict(self):
+        return {
+            "type": "RangedArm",
+            "name": self.name,
+            "condition": self.condition,
+            "worth": self.worth,
+            "cost": self.cost,
+            "ranged_attack": self.ranged_attack,
+            "shoot_range": self.shoot_range,
+            "rate": self.rate
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            condition=data["condition"],
+            worth=data["worth"],
+            cost=data["cost"],
+            ranged_attack=data["ranged_attack"],
+            shoot_range=data["shoot_range"],
+            rate=data["rate"],
+            name=data.get("name", "Ranged Arm")
+        )

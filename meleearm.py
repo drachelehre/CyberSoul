@@ -4,8 +4,9 @@ from player import *
 
 
 class MeleeArm(Part):
-    def __init__(self,condition, worth, cost, melee_attack, melee_size):
+    def __init__(self,condition, worth, cost, melee_attack, melee_size, name="MeleeArm"):
         super().__init__(condition, worth, cost)
+        self.name = name
         self.melee_attack = melee_attack
         self.melee_size = melee_size
 
@@ -39,3 +40,25 @@ class MeleeArm(Part):
             self.cost = max(25, int(self.cost * 1.2))
             self.melee_attack = max(100, int(self.melee_attack * 1.2))
             self.melee_size = max(50, int(self.melee_size * 1.2))
+
+    def to_dict(self):
+        return {
+            "type": "MeleeArm",
+            "name": self.name,
+            "condition": self.condition,
+            "worth": self.worth,
+            "cost": self.cost,
+            "melee_attack": self.melee_attack,
+            "melee_size": self.melee_size
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            condition=data["condition"],
+            worth=data["worth"],
+            cost=data["cost"],
+            melee_attack=data["melee_attack"],
+            melee_size=data["melee_size"],
+            name=data.get("name", "Melee Arm")
+        )
