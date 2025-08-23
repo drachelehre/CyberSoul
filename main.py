@@ -463,12 +463,6 @@ def game_loop(player):
     drop_text_timer = 0
     drop_font = pygame.font.Font(None, 24)
 
-    player.inventory.append(generate_chip())
-    player.inventory.append(generate_leg_mod())
-    player.inventory.append(generate_melee_arm())
-    player.inventory.append(generate_chest_armor())
-    player.inventory.append(generate_ranged_arm())
-
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
