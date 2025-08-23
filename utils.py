@@ -7,6 +7,7 @@ from chest import *
 from legs import *
 from player import *
 from enemy import *
+from chip import *
 
 
 def random_condition():
@@ -56,6 +57,15 @@ def generate_leg_mod():
     part = Legs(cond, worth, cost, speed)
     part.name = name
     part.legs_adjust()
+    return part
+
+def generate_chip():
+    name, stats = random.choice(list(implant_chip.items()))
+    worth, cost, melee_rate, regenerate, regen_rate = stats
+    cond = random_condition()
+    part = Chip(cond, worth, cost, melee_rate, regenerate, regen_rate)
+    part.name = name
+    part.chip_adjust()
     return part
 
 def generate_enemy(player):

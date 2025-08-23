@@ -109,9 +109,16 @@ class Player(Entity):
             if self.chip:
                 self.inventory.append(self.chip)
             self.chip = part
-            self.melee_rate = part.melee_rate
-            self.regenerate = part.regenerate
-            self.regen_rate = part.regen_rate
+            if part.melee_rate == 0:
+                self.melee_rate = MELEE_SWIPE_RATE
+            else:
+                self.melee_rate = part.melee_rate
+            if part.regenerate == 0 and part.regen_rate == 0:
+                self.regenerate = PLAYER_BASE_REGEN
+                self.regen_rate = PLAYER_BASE_REGEN_RATE
+            else:
+                self.regenerate = part.regenerate
+                self.regen_rate = part.regen_rate
 
         else:
             self.inventory.append(part)
@@ -149,6 +156,7 @@ class Player(Entity):
         if pygame.mouse.get_pressed()[2]:
             self.melee(dt)
 
+        self.regen(dt)
         self.update_rect()
 
     def shoot(self, dt):

@@ -35,7 +35,7 @@ class Legs(Part):
 
     def to_dict(self):
         return {
-            "type": "Chest",
+            "type": "Legs",
             "name": self.name,
             "condition": self.condition,
             "worth": self.worth,
@@ -50,5 +50,5 @@ class Legs(Part):
             worth=data["worth"],
             cost=data["cost"],
             speed=data["speed"],
-            name=data.get("name", "Chest")
+            name=data.get("name", "Legs")
         )

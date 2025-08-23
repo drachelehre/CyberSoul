@@ -7,47 +7,47 @@ class Chip(Part):
         self.name = name
         self.melee_rate = melee_rate
         self.regenerate = regenerate
-        self.regen_rate = regen_rate
+        self.regen_rate = float(regen_rate)
 
-    def legs_adjust(self):
+    def chip_adjust(self):
         if self.condition == "decayed":
-            self.worth = int(self.worth * 0.25)
-            self.cost = int(self.cost * 0.1)
-            self.melee_rate = int(self.melee_rate * 0.25)
-            self.regenerate = int(self.regenerate * 0.25)
-            self.regen_rate = min(5, int(self.melee_rate * 4))
+            self.worth = round(self.worth * 0.25, 2)
+            self.cost = round(self.cost * 0.1, 2)
+            self.melee_rate = round(self.melee_rate * 0.25, 2)
+            self.regenerate = round(self.regenerate * 0.25, 2)
+            self.regen_rate = round(min(5, self.regen_rate * 4), 2)
 
         elif self.condition == "poor":
-            self.worth = int(self.worth * 0.50)
-            self.cost = int(self.cost * 0.5)
-            self.melee_rate = int(self.melee_rate * 0.25)
-            self.regenerate = int(self.regenerate * 0.25)
-            self.regen_rate = min(4, int(self.melee_rate * 3))
+            self.worth = round(self.worth * 0.50, 2)
+            self.cost = round(self.cost * 0.5, 2)
+            self.melee_rate = round(self.melee_rate * 0.25, 2)
+            self.regenerate = round(self.regenerate * 0.25, 2)
+            self.regen_rate = round(min(4, self.regen_rate * 3), 2)
 
         elif self.condition == "subpar":
-            self.worth = int(self.worth * 0.75)
-            self.cost = int(self.cost * 0.75)
-            self.melee_rate = int(self.melee_rate * 0.25)
-            self.regenerate = int(self.regenerate * 0.25)
-            self.regen_rate = min(3, int(self.melee_rate * 2))
+            self.worth = round(self.worth * 0.75, 2)
+            self.cost = round(self.cost * 0.75, 2)
+            self.melee_rate = round(self.melee_rate * 0.25, 2)
+            self.regenerate = round(self.regenerate * 0.25, 2)
+            self.regen_rate = round(min(3, self.regen_rate * 2), 2)
 
         elif self.condition == "excellent":
-            self.worth = int(self.worth * 1.25)
-            self.cost = int(self.cost * 1.25)
-            self.melee_rate = int(self.melee_rate * 0.25)
-            self.regenerate = int(self.regenerate * 0.25)
-            self.regen_rate = min(1, int(self.melee_rate * 0.75))
+            self.worth = round(self.worth * 1.25, 2)
+            self.cost = round(self.cost * 1.25, 2)
+            self.melee_rate = round(self.melee_rate * 0.25, 2)
+            self.regenerate = round(self.regenerate * 0.25, 2)
+            self.regen_rate = round(min(1, self.regen_rate * 0.75), 2)
 
         elif self.condition == "pristine":
-            self.worth = int(self.worth * 2)
-            self.cost = int(self.cost * 2)
-            self.melee_rate = int(self.melee_rate * 0.25)
-            self.regenerate = int(self.regenerate * 0.25)
-            self.regen_rate = min(.5, int(self.melee_rate * 0.25))
+            self.worth = round(self.worth * 2, 2)
+            self.cost = round(self.cost * 2, 2)
+            self.melee_rate = round(self.melee_rate * 0.25, 2)
+            self.regenerate = round(self.regenerate * 0.25, 2)
+            self.regen_rate = round(min(0.5, self.regen_rate * 0.25), 2)
 
     def to_dict(self):
-         return {
-            "type": "Chest",
+        return {
+            "type": "Chip",
             "name": self.name,
             "condition": self.condition,
             "worth": self.worth,
@@ -66,5 +66,5 @@ class Chip(Part):
             melee_rate=data["melee_rate"],
             regenerate=data["regenerate"],
             regen_rate=data["regen_rate"],
-            name=data.get("name", "Chest")
+            name=data.get("name", "Chip")
         )

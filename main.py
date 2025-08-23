@@ -10,6 +10,7 @@ from crosshair import *
 from battlefield import *
 from utils import *
 from melee import *
+from legs import *
 
 
 SAVE_FOLDER = "saves"
@@ -18,7 +19,7 @@ ITEM_CLASSES = {
     "RangedArm": RangedArm,
     "MeleeArm": MeleeArm,
     "Chest": Chest,
-    "Leg": Leg,
+    "Leg": Legs,
     "Chip": Chip
     # add others here
 }
@@ -100,6 +101,7 @@ def load_game(name):
     player.m_arm = load_part(data["m_arm"])
     player.chest = load_part(data["chest"])
     player.leg = load_part(data["leg"])
+    player.chip = load_part(data["chip"])
     player.inventory = [load_part(item) for item in data["inventory"]]
 
     print(f"Game loaded from {filename}")
@@ -158,10 +160,10 @@ def inventory_menu(screen, player):
                 text = f"{item.condition} {item.name}"
                 stats = (
                     f"Worth: {item.worth} | "
-                    f"Attack +{item.ranged_attack} | "
-                    f"Range +{item.shoot_range} | "
-                    f"Rate {item.rate} | "
-                    f"Cost {item.cost} humanity"
+                    f"Attack: {item.ranged_attack} | "
+                    f"Range: {item.shoot_range} | "
+                    f"Rate: {item.rate} | "
+                    f"Cost: {item.cost} humanity"
                 )
                 item_surface = inv_font.render(text, True, color)
                 stats_surface = inv_font.render(stats, True, (180, 180, 180))
@@ -172,9 +174,9 @@ def inventory_menu(screen, player):
                 text = f"{item.condition} {item.name}"
                 stats = (
                     f"Worth: {item.worth} | "
-                    f"Attack +{item.melee_attack} | "
-                    f"Range +{item.melee_size} | "
-                    f"Cost {item.cost} humanity"
+                    f"Attack: {item.melee_attack} | "
+                    f"Range: {item.melee_size} | "
+                    f"Cost: {item.cost} humanity"
                 )
                 item_surface = inv_font.render(text, True, color)
                 stats_surface = inv_font.render(stats, True, (180, 180, 180))
@@ -185,7 +187,33 @@ def inventory_menu(screen, player):
                 text = f"{item.condition} {item.name}"
                 stats = (
                     f"Worth: {item.worth} | "
-                    f"Defense {item.defense} | "
+                    f"Defense: {item.defense} | "
+                    f"Cost {item.cost} humanity"
+                )
+                item_surface = inv_font.render(text, True, color)
+                stats_surface = inv_font.render(stats, True, (180, 180, 180))
+
+                screen.blit(item_surface, (50, 120 + i * 45))
+                screen.blit(stats_surface, (70, 140 + i * 45))
+            elif isinstance(item, Legs):
+                text = f"{item.condition} {item.name}"
+                stats = (
+                    f"Worth: {item.worth} | "
+                    f"Speed: {item.speed} | "
+                    f"Cost {item.cost} humanity"
+                )
+                item_surface = inv_font.render(text, True, color)
+                stats_surface = inv_font.render(stats, True, (180, 180, 180))
+
+                screen.blit(item_surface, (50, 120 + i * 45))
+                screen.blit(stats_surface, (70, 140 + i * 45))
+            elif isinstance(item, Chip):
+                text = f"{item.condition} {item.name}"
+                stats = (
+                    f"Worth: {item.worth} | "
+                    f"Melee Rate: {item.melee_rate} | "
+                    f"Regenerate: {item.regenerate} | "
+                    f"Regen Rate: {item.regen_rate} | "
                     f"Cost {item.cost} humanity"
                 )
                 item_surface = inv_font.render(text, True, color)
@@ -435,6 +463,12 @@ def game_loop(player):
     drop_text_timer = 0
     drop_font = pygame.font.Font(None, 24)
 
+    player.inventory.append(generate_chip())
+    player.inventory.append(generate_leg_mod())
+    player.inventory.append(generate_melee_arm())
+    player.inventory.append(generate_chest_armor())
+    player.inventory.append(generate_ranged_arm())
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -448,7 +482,6 @@ def game_loop(player):
                     inventory_menu(screen, player)
                 if event.key == pygame.K_c:
                     status_screen(screen, player)
-
 
         small_font = pygame.font.Font(None, 24)
 

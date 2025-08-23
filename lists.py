@@ -39,6 +39,12 @@ leg_mods = {
     "rocket sleds": [4000, 25, 150]
 }
 
+implant_chip = {
+    "Muscle twitch enhancer": [4000, 100, .5, 0, 0],
+    "wound closure": [5000, 200, 0, 1, .5],
+    "physical overclock": [10000, 500, .1, 10, .1]
+}
+
 # name: size, health, ranged_atk, ranged_rate, shot_range,  melee_atk, defense, speed
 enemies = {
     "grunt": (12, 10, 5, 3, 100, 0, 0, 40),
