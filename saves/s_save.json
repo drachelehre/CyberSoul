@@ -1,0 +1,172 @@
+{
+    "name": "s",
+    "x": 375.0,
+    "y": 250.0,
+    "health": 100,
+    "health_max": 100,
+    "ranged_attack": 40,
+    "melee_attack": 18,
+    "defense": 200,
+    "speed": 125,
+    "humanity": 131,
+    "rotation": -175.79522496291472,
+    "credits": 5180,
+    "shoot_range": 187,
+    "shot_rate": 0.15,
+    "melee_size": 30,
+    "regenerate": 10,
+    "regen_timer": 0.033,
+    "regen_rate": 0.1,
+    "chip": {
+        "type": "Chip",
+        "name": "Physical Overclock",
+        "condition": "Good",
+        "worth": 10000,
+        "cost": 500,
+        "melee_rate": 0.1,
+        "regenerate": 10,
+        "regen_rate": 0.1
+    },
+    "r_arm": {
+        "type": "RangedArm",
+        "name": "Laser Bolt Blaster",
+        "condition": "Excellent",
+        "worth": 2500,
+        "cost": 31,
+        "ranged_attack": 40,
+        "shoot_range": 187,
+        "rate": 0.15
+    },
+    "m_arm": {
+        "type": "MeleeArm",
+        "name": "Scimitar",
+        "condition": "Good",
+        "worth": 400,
+        "cost": 12,
+        "melee_attack": 18,
+        "melee_size": 30
+    },
+    "chest": {
+        "type": "Chest",
+        "name": "Tungsten Armor",
+        "condition": "Good",
+        "worth": 5000,
+        "cost": 100,
+        "defense": 200
+    },
+    "leg": {
+        "type": "Legs",
+        "name": "Deployable Skates",
+        "condition": "Excellent",
+        "worth": 1562,
+        "cost": 18,
+        "speed": 125
+    },
+    "inventory": [
+        {
+            "type": "Legs",
+            "name": "Athletic Springs",
+            "condition": "Good",
+            "worth": 15,
+            "cost": 5,
+            "speed": 60
+        },
+        {
+            "type": "Chip",
+            "name": "Muscle Twitch Enhancer",
+            "condition": "Subpar",
+            "worth": 3000.0,
+            "cost": 75.0,
+            "melee_rate": 0.12,
+            "regenerate": 0.0,
+            "regen_rate": 0.0
+        },
+        {
+            "type": "Chest",
+            "name": "Iron Armor",
+            "condition": "Subpar",
+            "worth": 75,
+            "cost": 12,
+            "defense": 20
+        },
+        {
+            "type": "Chest",
+            "name": "Steel Armor",
+            "condition": "Good",
+            "worth": 500,
+            "cost": 20,
+            "defense": 25
+        },
+        {
+            "type": "Legs",
+            "name": "Rocket Sleds",
+            "condition": "Decayed",
+            "worth": 1000,
+            "cost": 5,
+            "speed": 60
+        },
+        {
+            "type": "Legs",
+            "name": "Athletic Springs",
+            "condition": "Subpar",
+            "worth": 75,
+            "cost": 12,
+            "speed": 80
+        },
+        {
+            "type": "Legs",
+            "name": "Pneumatic Knees",
+            "condition": "Good",
+            "worth": 180,
+            "cost": 8,
+            "speed": 70
+        },
+        {
+            "type": "RangedArm",
+            "name": "Hand Cannon",
+            "condition": "Poor",
+            "worth": 250,
+            "cost": 7,
+            "ranged_attack": 12,
+            "shoot_range": 40,
+            "rate": 1.4000000000000001
+        },
+        {
+            "type": "Legs",
+            "name": "Deployable Skates",
+            "condition": "Good",
+            "worth": 1250,
+            "cost": 15,
+            "speed": 100
+        },
+        {
+            "type": "Chip",
+            "name": "Muscle Twitch Enhancer",
+            "condition": "Pristine",
+            "worth": 8000,
+            "cost": 200,
+            "melee_rate": 0.12,
+            "regenerate": 0.0,
+            "regen_rate": 0.0
+        },
+        {
+            "type": "RangedArm",
+            "name": "Hand Cannon",
+            "condition": "Good",
+            "worth": 500,
+            "cost": 10,
+            "ranged_attack": 25,
+            "shoot_range": 80,
+            "rate": 0.8
+        },
+        {
+            "type": "MeleeArm",
+            "name": "Gladius",
+            "condition": "Excellent",
+            "worth": 400,
+            "cost": 18,
+            "melee_attack": 40,
+            "melee_size": 40
+        }
+    ]
+}

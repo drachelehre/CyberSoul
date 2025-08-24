@@ -10,35 +10,35 @@ class Chip(Part):
         self.regen_rate = float(regen_rate)
 
     def chip_adjust(self):
-        if self.condition == "decayed":
+        if self.condition == "Decayed":
             self.worth = round(self.worth * 0.25, 2)
             self.cost = round(self.cost * 0.1, 2)
             self.melee_rate = round(self.melee_rate * 0.25, 2)
             self.regenerate = round(self.regenerate * 0.25, 2)
             self.regen_rate = round(min(5, self.regen_rate * 4), 2)
 
-        elif self.condition == "poor":
+        elif self.condition == "Poor":
             self.worth = round(self.worth * 0.50, 2)
             self.cost = round(self.cost * 0.5, 2)
             self.melee_rate = round(self.melee_rate * 0.25, 2)
             self.regenerate = round(self.regenerate * 0.25, 2)
             self.regen_rate = round(min(4, self.regen_rate * 3), 2)
 
-        elif self.condition == "subpar":
+        elif self.condition == "Subpar":
             self.worth = round(self.worth * 0.75, 2)
             self.cost = round(self.cost * 0.75, 2)
             self.melee_rate = round(self.melee_rate * 0.25, 2)
             self.regenerate = round(self.regenerate * 0.25, 2)
             self.regen_rate = round(min(3, self.regen_rate * 2), 2)
 
-        elif self.condition == "excellent":
+        elif self.condition == "Excellent":
             self.worth = round(self.worth * 1.25, 2)
             self.cost = round(self.cost * 1.25, 2)
             self.melee_rate = round(self.melee_rate * 0.25, 2)
             self.regenerate = round(self.regenerate * 0.25, 2)
             self.regen_rate = round(min(1, self.regen_rate * 0.75), 2)
 
-        elif self.condition == "pristine":
+        elif self.condition == "Pristine":
             self.worth = round(self.worth * 2, 2)
             self.cost = round(self.cost * 2, 2)
             self.melee_rate = round(self.melee_rate * 0.25, 2)

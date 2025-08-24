@@ -24,6 +24,7 @@ ITEM_CLASSES = {
     # add others here
 }
 
+
 def save_game(player):
     if not os.path.exists(SAVE_FOLDER):
         os.makedirs(SAVE_FOLDER)
@@ -48,7 +49,7 @@ def save_game(player):
         "melee_size": player.melee_size,
         "regenerate": player.regenerate,
         "regen_timer": player.regen_timer,
-        "regen_rate": player.regen_timer,
+        "regen_rate": player.regen_rate,
         "chip": player.chip.to_dict() if player.chip else None,
         "r_arm": player.r_arm.to_dict() if player.r_arm else None,
         "m_arm": player.m_arm.to_dict() if player.m_arm else None,
@@ -92,7 +93,7 @@ def load_game(name):
     def load_part(part_data):
         if part_data is None:
             return None
-        cls = ITEM_CLASSES.get(part_data["type"])
+        cls = get_item_classes().get(part_data["type"])
         if cls:
             return cls.from_dict(part_data)
         return None
@@ -112,6 +113,7 @@ def inventory_menu(screen, player):
     font = pygame.font.Font(None, 48)
     small_font = pygame.font.Font(None, 24)
     inv_font = pygame.font.Font(None, 16)
+    exit_font = pygame.font.Font(None, 20)
 
     clock = pygame.time.Clock()
     selected_index = 0
@@ -141,7 +143,7 @@ def inventory_menu(screen, player):
                         item = player.inventory[page * ITEMS_PER_PAGE + selected_index]
                         player.equip(item)
 
-        screen.fill((30, 30, 30))
+        screen.fill((0, 0, 0))
 
         title = font.render(f"Inventory (Page {page + 1})", True, (255, 255, 255))
         screen.blit(title, (SCREEN_WIDTH // 2 - title.get_width() // 2, 50))
@@ -222,9 +224,13 @@ def inventory_menu(screen, player):
                 screen.blit(item_surface, (50, 120 + i * 45))
                 screen.blit(stats_surface, (70, 140 + i * 45))
             else:
-                text = f"{item.__class__.__name__} ({item.condition})"
+                text = f"{item.__class__.__name__}"
                 item_surface = small_font.render(text, True, color)
                 screen.blit(item_surface, (50, 150 + i * 40))
+
+        exit_text = exit_font.render("Press ESC to exit", True, (200,200,200))
+
+        screen.blit(exit_text, (SCREEN_WIDTH - exit_text.get_width() - 40, 470))
 
         pygame.display.flip()
         clock.tick(60)
@@ -288,6 +294,7 @@ def get_player_name(screen, prompt="Enter player name:"):
         pygame.display.flip()
         clock.tick(60)
 
+
 def status_screen(screen, player):
     title_font = pygame.font.Font(None, 48)
     section_font = pygame.font.Font(None, 32)
@@ -347,29 +354,23 @@ def status_screen(screen, player):
         clock.tick(60)
 
 
-
-
 def game_over(screen):
     font = pygame.font.Font(None, 74)
     small_font = pygame.font.Font(None, 36)
-    load_font = pygame.font.Font(None, 24)
     exit_font = pygame.font.Font(None, 20)
     game_over_note = font.render("Game Over", True, (255, 255, 255))
     bad_end_hum = small_font.render("You lost to the machine", True, (200, 200, 200))
-    load_text = load_font.render("Press 'L' to load a file", True, "grey")
     screen.fill((0, 0, 0))
     screen.blit(game_over_note, (SCREEN_WIDTH // 2 - game_over_note.get_width() // 2, 150))
     screen.blit(bad_end_hum, (SCREEN_WIDTH // 2 - bad_end_hum.get_width() // 2, 300))
-    screen.blit(load_text, (SCREEN_WIDTH // 2 - load_text.get_width() // 2, 350))
 
-    exit_text = exit_font.render("Press q to go to main menu", True, (255, 255, 255))
+    exit_text = exit_font.render("Press Q to go to main menu", True, (255, 255, 255))
     screen.blit(exit_text, (20, 480))
 
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_q:
                 main_menu(screen)
-
 
 
 def main_menu(screen):
@@ -380,7 +381,6 @@ def main_menu(screen):
     start_text = small_font.render("Press ENTER to Start New Game", True, (200, 200, 200))
     load_text = small_font.render("Press L to Load Game", True, (200, 200, 200))
     quit_text = small_font.render("Press ESC to Quit", True, (200, 200, 200))
-
 
     clock = pygame.time.Clock()
     while True:
@@ -444,12 +444,14 @@ def game_loop(player):
     shots = pygame.sprite.Group()
     melee = pygame.sprite.Group()
     enemy_group = pygame.sprite.Group()
+    bosses = pygame.sprite.Group()
 
     Player.containers = (updatable, drawable)
     BattleField.containers = (updatable,)
     Shot.containers = (shots, updatable, drawable)
     Melee.containers = (melee, updatable, drawable)
     Enemy.containers = (enemy_group, updatable, drawable)
+    Boss.containers = (bosses, updatable, drawable)
 
     player.add(*Player.containers)  # make sure player is in groups
     crosshair = Crosshair()
@@ -463,6 +465,8 @@ def game_loop(player):
     drop_text_timer = 0
     drop_font = pygame.font.Font(None, 24)
 
+
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -472,7 +476,7 @@ def game_loop(player):
                     selection = pause_menu(screen, player)
                     if selection == "quit":
                         return  # quit to main menu
-                if event.key == pygame.K_r:
+                if event.key == pygame.K_e:
                     inventory_menu(screen, player)
                 if event.key == pygame.K_c:
                     status_screen(screen, player)
@@ -505,10 +509,18 @@ def game_loop(player):
                 for enemy in hits:
                     enemy.health -= shot.owner.ranged_attack
                     shot.kill()
+                boss_hits = pygame.sprite.spritecollide(shot, bosses, False)
+                for boss in boss_hits:
+                    boss.health -= shot.owner.ranged_attack
+                    shot.kill()
 
         # Enemy shots hit player
         for shot in shots:
             if isinstance(shot.owner, Enemy):
+                if player.rect.colliderect(shot.rect):
+                    player.health -= max(1, shot.owner.ranged_attack - player.defense)
+                    shot.kill()
+            if isinstance(shot.owner, Boss):
                 if player.rect.colliderect(shot.rect):
                     player.health -= max(1, shot.owner.ranged_attack - player.defense)
                     shot.kill()
@@ -519,6 +531,9 @@ def game_loop(player):
                 hits = pygame.sprite.spritecollide(m, enemy_group, False)
                 for enemy in hits:
                     enemy.health -= m.owner.melee_attack
+                boss_hits = pygame.sprite.spritecollide(m, bosses, False)
+                for b in boss_hits:
+                    b.health -= m.owner.melee_attack
 
         # Enemy melee hits player
         for m in melee:
@@ -537,11 +552,29 @@ def game_loop(player):
                     drop_text = drop_font.render(f"{part.name} dropped!", True, (255, 255, 0))
                     drop_text_timer = pygame.time.get_ticks() + 5000  # show for 5s
 
+        # Bosses give more rewards
+        for b in bosses:
+            if b.health <= 0:
+                b.kill()
+                money_drop(player)
+                money_drop(player)
+                part, dropped = part_drop()
+                if dropped:
+                    player.inventory.append(part)
+                    drop_text = drop_font.render(f"{part.name} dropped!", True, (255, 255, 0))
+                    drop_text_timer = pygame.time.get_ticks() + 5000  # show for 5s
+                part, dropped = part_drop()
+                if dropped:
+                    player.inventory.append(part)
+                    drop_text = drop_font.render(f"{part.name} dropped!", True, (255, 255, 0))
+                    drop_text_timer = pygame.time.get_ticks() + 5000  # show for 5s
+
         # Drop Notification
         if drop_text and pygame.time.get_ticks() < drop_text_timer:
             screen.blit(drop_text, (SCREEN_WIDTH // 2 - drop_text.get_width() // 2, 450))
         else:
             drop_text = None
+
 
         pygame.display.flip()
         dt = clock.tick(60) / 1000

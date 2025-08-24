@@ -8,6 +8,7 @@ from legs import *
 from player import *
 from enemy import *
 from chip import *
+from boss import *
 
 
 def random_condition():
@@ -49,7 +50,6 @@ def generate_chest_armor():
     part.chest_adjust()
     return part
 
-
 def generate_leg_mod():
     name, stats = random.choice(list(leg_mods.items()))
     worth, cost, speed = stats
@@ -67,6 +67,25 @@ def generate_chip():
     part.name = name
     part.chip_adjust()
     return part
+
+def generate_boss(player):
+    name, stats = random.choice(list(enemies.items()))
+    size, health, ranged_attack, ranged_rate, shot_range, melee_attack, defense, speed = stats
+
+    edges = [
+        lambda: (-ENEMY_MAX_SIZE, random.randint(0, SCREEN_HEIGHT)),
+        lambda: (SCREEN_WIDTH + ENEMY_MAX_SIZE, random.randint(0, SCREEN_HEIGHT)),
+        lambda: (random.randint(0, SCREEN_WIDTH), -ENEMY_MAX_SIZE),
+        lambda: (random.randint(0, SCREEN_WIDTH), SCREEN_HEIGHT + ENEMY_MAX_SIZE),
+    ]
+
+    x, y = random.choice(edges)()
+
+    enemy = Boss(player, x, y, size, health, ranged_attack, ranged_rate, shot_range,
+                 melee_attack, defense, speed)
+    enemy.name = name
+    return enemy
+
 
 def generate_enemy(player):
     name, stats = random.choice(list(enemies.items()))
@@ -91,7 +110,8 @@ def money_drop(player):
     player.credits += random.randint(10, 201)
 
 def generate_random_part():
-    random_parts = [generate_ranged_arm(), generate_melee_arm(), generate_chest_armor()]
+    random_parts = [generate_ranged_arm(), generate_melee_arm(), generate_chest_armor(), generate_leg_mod(),
+                    generate_chip()]
     return random.choice(random_parts)
 
 def part_drop():
@@ -102,3 +122,18 @@ def part_drop():
         drop = True
         return generate_random_part(), drop
     return None, drop
+
+def get_item_classes():
+    from rangedarm import RangedArm
+    from meleearm import MeleeArm
+    from chest import Chest
+    from legs import Legs
+    from chip import Chip
+
+    return {
+        "RangedArm": RangedArm,
+        "MeleeArm": MeleeArm,
+        "Chest": Chest,
+        "Legs": Legs,
+        "Chip": Chip,
+    }

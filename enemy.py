@@ -18,11 +18,12 @@ class Enemy(Entity):
         self.shot_rate = ranged_rate
         self.shoot_range = shoot_range
         self.melee_attack = melee_attack
+        self.melee_rate = ENEMY_MELEE_RATE
         self.defense = defense
         self.speed = speed
         self.rotation = 0
         self.timer = 0.0
-
+        self.melee_timer = 0.0
 
 
     def enemy_shape(self):
@@ -96,6 +97,26 @@ class Enemy(Entity):
             shot.add(*Shot.containers)
 
             self.timer = self.shot_rate  # cooldown
+    def melee(self, dt):
+        if not hasattr(self, "timer"):
+            self.timer = 0
+        if self.timer > 0:
+            self.timer -= dt
+            return
 
+        # distance to player
+        to_player = self.player.position - self.position
+        dist = to_player.length()
 
+        if dist <= ENEMY_MELEE_SIZE:
+            direction = to_player.normalize()
+
+            spawn_pos = self.position + direction * 12  # muzzle offset
+
+            melee = Melee(
+                self,
+                spawn_pos.x,
+                spawn_pos.y
+            )
+            melee.add(*Shot.containers)
 

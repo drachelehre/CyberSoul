@@ -1,48 +1,48 @@
 conditions = {
-    "decayed": 0.1,
-    "poor": 0.15,
-    "subpar": 0.2,
-    "good": 0.3,
-    "excellent": 0.2,
-    "pristine": 0.05
+    "Decayed": 0.1,
+    "Poor": 0.15,
+    "Subpar": 0.2,
+    "Good": 0.4,
+    "Excellent": 0.1,
+    "Pristine": 0.05
     }
 
 # name: worth, cost, range_attack, shoot_range, rate
 ranged_arms = {
-    "finger gun": [200, 5, 15, 50, 1.2],
-    "hand cannon": [500, 10, 25, 80, 0.8],
-    "laser bolt blaster": [2000, 25, 25, 150, 0.3],
-    "plasma launcher": [6000, 50, 50, 200, .75]
+    "Finger Gun": [200, 5, 15, 50, 1.2],
+    "Hand Cannon": [500, 10, 25, 80, 0.8],
+    "Laser Bolt Blaster": [2000, 25, 25, 150, 0.3],
+    "Plasma Launcher": [6000, 50, 50, 200, .75]
 }
 
 # name: worth, cost, melee_attack, melee_size
 melee_arms = {
-    "dagger": [100, 5, 5, 20],
-    "gladius": [250, 7, 12, 25],
-    "scimitar": [400, 12, 18, 30]
+    "Dagger": [100, 5, 5, 20],
+    "Gladius": [250, 7, 12, 25],
+    "Scimitar": [400, 12, 18, 30]
 }
 # name: worth, cost, defense
 chest_armor = {
-    "aluminum armor": [20, 5, 2],
-    "iron armor": [40, 5, 5],
-    "kevlar armor": [100, 10, 10],
-    "steel armor": [500, 20, 25],
-    "titanium armor": [2000, 40, 50],
-    "tungsten armor": [5000, 100, 200]
+    "Aluminum Armor": [20, 5, 2],
+    "Iron Armor": [40, 5, 5],
+    "Kevlar Armor": [100, 10, 10],
+    "Steel Armor": [500, 20, 25],
+    "Titanium Armor": [2000, 40, 50],
+    "Tungsten Armor": [5000, 100, 200]
 }
 
 # name: worth, cost, speed
 leg_mods = {
-    "athletic springs": [15, 5, 60],
-    "pneumatic knees": [180, 8, 70],
-    "deployable skates": [1250, 15, 100],
-    "rocket sleds": [4000, 25, 150]
+    "Athletic Springs": [15, 5, 60],
+    "Pneumatic Knees": [180, 8, 70],
+    "Deployable Skates": [1250, 15, 100],
+    "Rocket Sleds": [4000, 25, 150]
 }
 
 implant_chip = {
-    "Muscle twitch enhancer": [4000, 100, .5, 0, 0],
-    "wound closure": [5000, 200, 0, 1, .5],
-    "physical overclock": [10000, 500, .1, 10, .1]
+    "Muscle Twitch Enhancer": [4000, 100, .5, 0, 0],
+    "Wound Closure": [5000, 200, 0, 1, .5],
+    "Physical Overclock": [10000, 500, .1, 10, .1]
 }
 
 # name: size, health, ranged_atk, ranged_rate, shot_range,  melee_atk, defense, speed
@@ -74,5 +74,3 @@ EQUIPMENT_SLOTS = [
         ("Legs", "leg"),
         ("Chip", "chip"),
     ]
-
-
