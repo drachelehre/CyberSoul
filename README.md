@@ -4,4 +4,4 @@
 ---
 
 This is a tech demo of a game inspired by games like Cyberpunk and Shadowrun.
-At present, it is only showing that just about everything works. It is 
+At present, it is only showing that just about everything works. It is very rough and very unfair as of this build. 
