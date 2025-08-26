@@ -68,3 +68,10 @@ To save your progress, press "ESC" to enter pause menu and press "S" to save.
 To load, at main menu press "L" and input the name of desired save.
 
 ---
+
+## Under the Hood
+
+- Infinitely spawning enemies
+- Randomized parts of various conditions
+- Randomized shops
+- Made with Python using Pycharm library
