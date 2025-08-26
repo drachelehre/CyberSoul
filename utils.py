@@ -11,6 +11,7 @@ from chip import *
 from boss import *
 
 
+
 def random_condition():
     r = random.random()
     total = 0

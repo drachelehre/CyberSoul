@@ -11,6 +11,7 @@ from battlefield import *
 from utils import *
 from melee import *
 from legs import *
+from shop import *
 
 
 SAVE_FOLDER = "saves"
@@ -126,8 +127,6 @@ def inventory_menu(screen, player):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE or event.key == pygame.K_r:
                     return
-                elif event.key == pygame.K_s:
-                    status_screen(screen, player)
                 elif event.key == pygame.K_DOWN:
                     selected_index = (selected_index + 1) % min(ITEMS_PER_PAGE, len(player.inventory) - page * ITEMS_PER_PAGE)
                 elif event.key == pygame.K_UP:
@@ -235,6 +234,265 @@ def inventory_menu(screen, player):
         pygame.display.flip()
         clock.tick(60)
 
+def shop_buy(screen, player, shop):
+    font = pygame.font.Font(None, 48)
+    small_font = pygame.font.Font(None, 24)
+    inv_font = pygame.font.Font(None, 16)
+    exit_font = pygame.font.Font(None, 20)
+    warn_text = None
+    warn_text_timer = 0
+    warn_font = pygame.font.Font(None, 24)
+
+    clock = pygame.time.Clock()
+    selected_index = 0
+    page = 0
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit(); exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return
+                elif event.key == pygame.K_DOWN:
+                    selected_index = (selected_index + 1) % len(shop.inventory)
+                elif event.key == pygame.K_UP:
+                    selected_index = (selected_index - 1) % len(shop.inventory)
+                elif event.key == pygame.K_c:
+                    shop_sell(screen, player, shop)
+                elif event.key == pygame.K_RETURN:
+                    item = shop.inventory[page * selected_index]
+                    if player.credits >= item.worth:
+                        player.credits -= item.worth
+                        player.inventory.append(item)
+                        shop.inventory.remove(item)
+                    else:
+                        warn_text = warn_font.render("Not enough credits!", True, "red")
+                        warn_text_timer = pygame.time.get_ticks() + 5000  # show for 5s
+
+        screen.fill((0, 0, 0))
+
+        title = font.render("Shop (Buy)", True, (255, 255, 255))
+        screen.blit(title, (SCREEN_WIDTH // 2 - title.get_width() // 2, 50))
+
+        # Show current money
+        humanity_text = small_font.render(f"Credits: {player.credits}", True, "green")
+        screen.blit(humanity_text, (SCREEN_WIDTH - humanity_text.get_width() - 20, 20))
+
+        for i, item in enumerate(shop.inventory):
+            color = (255, 255, 0) if i == selected_index else (200, 200, 200)
+
+            if isinstance(item, RangedArm):
+                text = f"{item.condition} {item.name}"
+                stats = (
+                    f"Worth: {item.worth} | "
+                    f"Attack: {item.ranged_attack} | "
+                    f"Range: {item.shoot_range} | "
+                    f"Rate: {item.rate} | "
+                    f"Cost: {item.cost} humanity"
+                )
+                item_surface = inv_font.render(text, True, color)
+                stats_surface = inv_font.render(stats, True, (180, 180, 180))
+
+                screen.blit(item_surface, (50, 120 + i * 45))
+                screen.blit(stats_surface, (70, 140 + i * 45))
+            elif isinstance(item, MeleeArm):
+                text = f"{item.condition} {item.name}"
+                stats = (
+                    f"Worth: {item.worth} | "
+                    f"Attack: {item.melee_attack} | "
+                    f"Range: {item.melee_size} | "
+                    f"Cost: {item.cost} humanity"
+                )
+                item_surface = inv_font.render(text, True, color)
+                stats_surface = inv_font.render(stats, True, (180, 180, 180))
+
+                screen.blit(item_surface, (50, 120 + i * 45))
+                screen.blit(stats_surface, (70, 140 + i * 45))
+            elif isinstance(item, Chest):
+                text = f"{item.condition} {item.name}"
+                stats = (
+                    f"Worth: {item.worth} | "
+                    f"Defense: {item.defense} | "
+                    f"Cost {item.cost} humanity"
+                )
+                item_surface = inv_font.render(text, True, color)
+                stats_surface = inv_font.render(stats, True, (180, 180, 180))
+
+                screen.blit(item_surface, (50, 120 + i * 45))
+                screen.blit(stats_surface, (70, 140 + i * 45))
+            elif isinstance(item, Legs):
+                text = f"{item.condition} {item.name}"
+                stats = (
+                    f"Worth: {item.worth} | "
+                    f"Speed: {item.speed} | "
+                    f"Cost {item.cost}"
+                )
+                item_surface = inv_font.render(text, True, color)
+                stats_surface = inv_font.render(stats, True, (180, 180, 180))
+
+                screen.blit(item_surface, (50, 120 + i * 45))
+                screen.blit(stats_surface, (70, 140 + i * 45))
+            elif isinstance(item, Chip):
+                text = f"{item.condition} {item.name}"
+                stats = (
+                    f"Worth: {item.worth} | "
+                    f"Melee Rate: {item.melee_rate} | "
+                    f"Regenerate: {item.regenerate} | "
+                    f"Regen Rate: {item.regen_rate} | "
+                    f"Cost {item.cost}"
+                )
+                item_surface = inv_font.render(text, True, color)
+                stats_surface = inv_font.render(stats, True, (180, 180, 180))
+
+                screen.blit(item_surface, (50, 120 + i * 45))
+                screen.blit(stats_surface, (70, 140 + i * 45))
+            else:
+                text = f"{item.__class__.__name__}"
+                item_surface = small_font.render(text, True, color)
+                screen.blit(item_surface, (50, 150 + i * 40))
+
+        if warn_text and pygame.time.get_ticks() < warn_text_timer:
+            screen.blit(warn_text, (SCREEN_WIDTH // 2 - warn_text.get_width() // 2, 450))
+        else:
+            warn_text = None
+
+        exit_text = exit_font.render("Press ESC to exit", True, (200, 200, 200))
+
+        screen.blit(exit_text, (SCREEN_WIDTH - exit_text.get_width() - 40, 470))
+
+        pygame.display.flip()
+        clock.tick(60)
+
+def shop_sell(screen, player, shop):
+    font = pygame.font.Font(None, 48)
+    small_font = pygame.font.Font(None, 24)
+    inv_font = pygame.font.Font(None, 16)
+    exit_font = pygame.font.Font(None, 20)
+
+    clock = pygame.time.Clock()
+    selected_index = 0
+    page = 0
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit();
+                exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE or event.key == pygame.K_r:
+                    return
+                elif event.key == pygame.K_DOWN:
+                    selected_index = (selected_index + 1) % min(ITEMS_PER_PAGE,
+                                                                len(player.inventory) - page * ITEMS_PER_PAGE)
+                elif event.key == pygame.K_UP:
+                    selected_index = (selected_index - 1) % min(ITEMS_PER_PAGE,
+                                                                len(player.inventory) - page * ITEMS_PER_PAGE)
+                elif event.key == pygame.K_RIGHT:
+                    page = min(page + 1, max(0, (len(player.inventory) - 1) // ITEMS_PER_PAGE))
+                    selected_index = 0
+                elif event.key == pygame.K_LEFT:
+                    page = max(0, page - 1)
+                    selected_index = 0
+                if event.key == pygame.K_c:
+                    shop_buy(screen, player, shop)
+                elif event.key == pygame.K_RETURN:
+                    if player.inventory:
+                        item = player.inventory[page * ITEMS_PER_PAGE + selected_index]
+                        player.credits += item.worth
+                        player.inventory.remove(item)
+
+        screen.fill((0, 0, 0))
+
+        title = font.render(f"Inventory (Page {page + 1})", True, (255, 255, 255))
+        screen.blit(title, (SCREEN_WIDTH // 2 - title.get_width() // 2, 50))
+
+        # Show current humanity
+        humanity_text = small_font.render(f"Humanity: {player.humanity}", True, (255, 180, 180))
+        screen.blit(humanity_text, (SCREEN_WIDTH - humanity_text.get_width() - 20, 20))
+
+        # Display items for current page
+        start_index = page * ITEMS_PER_PAGE
+        end_index = start_index + ITEMS_PER_PAGE
+        for i, item in enumerate(player.inventory[start_index:end_index]):
+            color = (255, 255, 0) if i == selected_index else (200, 200, 200)
+
+            if isinstance(item, RangedArm):
+                text = f"{item.condition} {item.name}"
+                stats = (
+                    f"Worth: {item.worth} | "
+                    f"Attack: {item.ranged_attack} | "
+                    f"Range: {item.shoot_range} | "
+                    f"Rate: {item.rate} | "
+                    f"Cost: {item.cost} humanity"
+                )
+                item_surface = inv_font.render(text, True, color)
+                stats_surface = inv_font.render(stats, True, (180, 180, 180))
+
+                screen.blit(item_surface, (50, 120 + i * 45))
+                screen.blit(stats_surface, (70, 140 + i * 45))
+            elif isinstance(item, MeleeArm):
+                text = f"{item.condition} {item.name}"
+                stats = (
+                    f"Worth: {item.worth} | "
+                    f"Attack: {item.melee_attack} | "
+                    f"Range: {item.melee_size} | "
+                    f"Cost: {item.cost} humanity"
+                )
+                item_surface = inv_font.render(text, True, color)
+                stats_surface = inv_font.render(stats, True, (180, 180, 180))
+
+                screen.blit(item_surface, (50, 120 + i * 45))
+                screen.blit(stats_surface, (70, 140 + i * 45))
+            elif isinstance(item, Chest):
+                text = f"{item.condition} {item.name}"
+                stats = (
+                    f"Worth: {item.worth} | "
+                    f"Defense: {item.defense} | "
+                    f"Cost {item.cost} humanity"
+                )
+                item_surface = inv_font.render(text, True, color)
+                stats_surface = inv_font.render(stats, True, (180, 180, 180))
+
+                screen.blit(item_surface, (50, 120 + i * 45))
+                screen.blit(stats_surface, (70, 140 + i * 45))
+            elif isinstance(item, Legs):
+                text = f"{item.condition} {item.name}"
+                stats = (
+                    f"Worth: {item.worth} | "
+                    f"Speed: {item.speed} | "
+                    f"Cost {item.cost} humanity"
+                )
+                item_surface = inv_font.render(text, True, color)
+                stats_surface = inv_font.render(stats, True, (180, 180, 180))
+
+                screen.blit(item_surface, (50, 120 + i * 45))
+                screen.blit(stats_surface, (70, 140 + i * 45))
+            elif isinstance(item, Chip):
+                text = f"{item.condition} {item.name}"
+                stats = (
+                    f"Worth: {item.worth} | "
+                    f"Melee Rate: {item.melee_rate} | "
+                    f"Regenerate: {item.regenerate} | "
+                    f"Regen Rate: {item.regen_rate} | "
+                    f"Cost {item.cost} humanity"
+                )
+                item_surface = inv_font.render(text, True, color)
+                stats_surface = inv_font.render(stats, True, (180, 180, 180))
+
+                screen.blit(item_surface, (50, 120 + i * 45))
+                screen.blit(stats_surface, (70, 140 + i * 45))
+            else:
+                text = f"{item.__class__.__name__}"
+                item_surface = small_font.render(text, True, color)
+                screen.blit(item_surface, (50, 150 + i * 40))
+
+        exit_text = exit_font.render("Press ESC to exit", True, (200, 200, 200))
+
+        screen.blit(exit_text, (SCREEN_WIDTH - exit_text.get_width() - 40, 470))
+
+        pygame.display.flip()
+        clock.tick(60)
 
 def pause_menu(screen, player):
     font = pygame.font.Font(None, 60)
@@ -445,6 +703,7 @@ def game_loop(player):
     melee = pygame.sprite.Group()
     enemy_group = pygame.sprite.Group()
     bosses = pygame.sprite.Group()
+    shop = pygame.sprite.Group()
 
     Player.containers = (updatable, drawable)
     BattleField.containers = (updatable,)
@@ -452,6 +711,7 @@ def game_loop(player):
     Melee.containers = (melee, updatable, drawable)
     Enemy.containers = (enemy_group, updatable, drawable)
     Boss.containers = (bosses, updatable, drawable)
+    Shop.containers = (shop, updatable, drawable)
 
     player.add(*Player.containers)  # make sure player is in groups
     crosshair = Crosshair()
@@ -465,7 +725,11 @@ def game_loop(player):
     drop_text_timer = 0
     drop_font = pygame.font.Font(None, 24)
 
-
+    shop_timer = 0
+    shop_visible_time = 30  # seconds visible
+    shop_hidden_time = 60  # seconds hidden
+    shop_active = False
+    shop_open = False
 
     while running:
         for event in pygame.event.get():
@@ -575,6 +839,27 @@ def game_loop(player):
         else:
             drop_text = None
 
+        shop_timer -= dt
+        if shop_timer <= 0:
+            if shop_active:
+                # Hide current shop
+                for s in list(shop):
+                    s.kill()
+                shop_active = False
+                shop_timer = shop_hidden_time
+            else:
+                # Spawn new shop
+                new_shop = Shop(player)
+                new_shop.add(*Shop.containers)
+                shop_active = True
+                shop_timer = shop_visible_time
+
+        for s in shop:
+            if player.rect.colliderect(s) and not shop_open:
+                shop_open = True
+                shop_buy(screen, player, s)
+            elif not player.rect.colliderect(s):
+                shop_open = False
 
         pygame.display.flip()
         dt = clock.tick(60) / 1000
