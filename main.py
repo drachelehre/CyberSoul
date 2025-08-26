@@ -408,7 +408,7 @@ def shop_sell(screen, player, shop):
         screen.blit(title, (SCREEN_WIDTH // 2 - title.get_width() // 2, 50))
 
         # Show current humanity
-        humanity_text = small_font.render(f"Humanity: {player.humanity}", True, (255, 180, 180))
+        humanity_text = small_font.render(f"Humanity: {player.credits}", True, (255, 180, 180))
         screen.blit(humanity_text, (SCREEN_WIDTH - humanity_text.get_width() - 20, 20))
 
         # Display items for current page
