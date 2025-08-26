@@ -1,0 +1,165 @@
+{
+    "name": "test",
+    "x": 375.0,
+    "y": 250.0,
+    "health": 100,
+    "health_max": 100,
+    "ranged_attack": 25,
+    "melee_attack": 18,
+    "defense": 20,
+    "speed": 125,
+    "humanity": 398.0,
+    "rotation": 55.547494666868126,
+    "credits": 4544,
+    "shoot_range": 150,
+    "shot_rate": 0.3,
+    "melee_size": 30,
+    "regenerate": 10,
+    "regen_timer": -0.016999999999999994,
+    "regen_rate": 0.1,
+    "chip": {
+        "type": "Chip",
+        "name": "Physical Overclock",
+        "condition": "Good",
+        "worth": 10000,
+        "cost": 500,
+        "melee_rate": 0.1,
+        "regenerate": 10,
+        "regen_rate": 0.1
+    },
+    "r_arm": {
+        "type": "RangedArm",
+        "name": "Laser Bolt Blaster",
+        "condition": "Good",
+        "worth": 2000,
+        "cost": 25,
+        "ranged_attack": 25,
+        "shoot_range": 150,
+        "rate": 0.3
+    },
+    "m_arm": {
+        "type": "MeleeArm",
+        "name": "Scimitar",
+        "condition": "Good",
+        "worth": 400,
+        "cost": 12,
+        "melee_attack": 18,
+        "melee_size": 30
+    },
+    "chest": {
+        "type": "Chest",
+        "name": "Steel Armor",
+        "condition": "Subpar",
+        "worth": 375,
+        "cost": 15,
+        "defense": 20
+    },
+    "leg": {
+        "type": "Legs",
+        "name": "Deployable Skates",
+        "condition": "Excellent",
+        "worth": 1562,
+        "cost": 18,
+        "speed": 125
+    },
+    "inventory": [
+        {
+            "type": "Chest",
+            "name": "Aluminum Armor",
+            "condition": "Good",
+            "worth": 20,
+            "cost": 5,
+            "defense": 2
+        },
+        {
+            "type": "MeleeArm",
+            "name": "Gladius",
+            "condition": "Good",
+            "worth": 250,
+            "cost": 7,
+            "melee_attack": 12,
+            "melee_size": 25
+        },
+        {
+            "type": "MeleeArm",
+            "name": "Gladius",
+            "condition": "Excellent",
+            "worth": 400,
+            "cost": 18,
+            "melee_attack": 40,
+            "melee_size": 40
+        },
+        {
+            "type": "MeleeArm",
+            "name": "Gladius",
+            "condition": "Decayed",
+            "worth": 62,
+            "cost": 5,
+            "melee_attack": 5,
+            "melee_size": 10
+        },
+        {
+            "type": "MeleeArm",
+            "name": "Gladius",
+            "condition": "Decayed",
+            "worth": 62,
+            "cost": 5,
+            "melee_attack": 5,
+            "melee_size": 10
+        },
+        {
+            "type": "Legs",
+            "name": "Athletic Springs",
+            "condition": "Subpar",
+            "worth": 75,
+            "cost": 12,
+            "speed": 80
+        },
+        {
+            "type": "Chip",
+            "name": "Wound Closure",
+            "condition": "Decayed",
+            "worth": 1250.0,
+            "cost": 20.0,
+            "melee_rate": 0.0,
+            "regenerate": 0.25,
+            "regen_rate": 2.0
+        },
+        {
+            "type": "Legs",
+            "name": "Pneumatic Knees",
+            "condition": "Good",
+            "worth": 180,
+            "cost": 8,
+            "speed": 70
+        },
+        {
+            "type": "MeleeArm",
+            "name": "Gladius",
+            "condition": "Excellent",
+            "worth": 400,
+            "cost": 18,
+            "melee_attack": 40,
+            "melee_size": 40
+        },
+        {
+            "type": "RangedArm",
+            "name": "Plasma Launcher",
+            "condition": "Good",
+            "worth": 6000,
+            "cost": 50,
+            "ranged_attack": 50,
+            "shoot_range": 200,
+            "rate": 0.75
+        },
+        {
+            "type": "MeleeArm",
+            "name": "Dagger",
+            "condition": "Poor",
+            "worth": 50,
+            "cost": 7,
+            "melee_attack": 10,
+            "melee_size": 15
+        }
+    ]
+}

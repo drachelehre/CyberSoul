@@ -394,7 +394,7 @@ def shop_sell(screen, player, shop):
                 elif event.key == pygame.K_LEFT:
                     page = max(0, page - 1)
                     selected_index = 0
-                if event.key == pygame.K_c:
+                elif event.key == pygame.K_c:
                     shop_buy(screen, player, shop)
                 elif event.key == pygame.K_RETURN:
                     if player.inventory:
