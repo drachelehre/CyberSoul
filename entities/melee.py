@@ -1,8 +1,8 @@
-from entity import *
+from .entity import *
 from constants import *
 import pygame
 import math
-from player import *
+from .player import *
 
 
 class Melee(Entity):

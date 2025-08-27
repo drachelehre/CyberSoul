@@ -1,6 +1,6 @@
 import pygame
-from player import *
-from entity import *
+from .player import *
+from .entity import *
 
 
 class Enemy(Entity):

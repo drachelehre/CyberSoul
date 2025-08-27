@@ -1,5 +1,4 @@
-
-from entity import *
+from .entity import *
 from constants import *
 import pygame
 

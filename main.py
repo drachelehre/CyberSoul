@@ -1,17 +1,12 @@
-import pygame
 import json
 import os
-from entity import *
-from player import *
-from enemy import *
-from parts import *
-from constants import *
-from crosshair import *
+from entities.crosshair import *
 from battlefield import *
+from parts.rangedarm import RangedArm
 from utils import *
-from melee import *
-from legs import *
-from shop import *
+from entities.melee import *
+from parts.legs import *
+from entities.shop import *
 
 
 SAVE_FOLDER = "saves"
@@ -239,13 +234,12 @@ def shop_buy(screen, player, shop):
     small_font = pygame.font.Font(None, 24)
     inv_font = pygame.font.Font(None, 16)
     exit_font = pygame.font.Font(None, 20)
-    warn_text = None
-    warn_text_timer = 0
     warn_font = pygame.font.Font(None, 24)
 
     clock = pygame.time.Clock()
     selected_index = 0
-    page = 0
+    warn_text = None
+    warn_text_timer = 0
 
     while True:
         for event in pygame.event.get():
@@ -260,12 +254,14 @@ def shop_buy(screen, player, shop):
                     selected_index = (selected_index - 1) % len(shop.inventory)
                 elif event.key == pygame.K_c:
                     shop_sell(screen, player, shop)
-                elif event.key == pygame.K_RETURN:
-                    item = shop.inventory[page * selected_index]
+                elif event.key == pygame.K_RETURN and shop.inventory:
+                    item = shop.inventory[selected_index]
                     if player.credits >= item.worth:
                         player.credits -= item.worth
                         player.inventory.append(item)
                         shop.inventory.remove(item)
+                        # reset selection so it doesn't point past list end
+                        selected_index = min(selected_index, len(shop.inventory) - 1)
                     else:
                         warn_text = warn_font.render("Not enough credits!", True, "red")
                         warn_text_timer = pygame.time.get_ticks() + 5000  # show for 5s

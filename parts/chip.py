@@ -1,4 +1,4 @@
-from parts import *
+from .parts import Part
 
 
 class Chip(Part):

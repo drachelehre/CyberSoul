@@ -1,6 +1,3 @@
-import pygame
-from constants import *
-from enemy import *
 from random import *
 from utils import *
 

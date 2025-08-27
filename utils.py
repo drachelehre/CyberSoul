@@ -1,14 +1,5 @@
 import random
-from lists import *
-from parts import *
-from rangedarm import *
-from meleearm import *
-from chest import *
-from legs import *
-from player import *
-from enemy import *
-from chip import *
-from boss import *
+from entities.boss import *
 
 
 
@@ -125,11 +116,11 @@ def part_drop():
     return None, drop
 
 def get_item_classes():
-    from rangedarm import RangedArm
-    from meleearm import MeleeArm
-    from chest import Chest
-    from legs import Legs
-    from chip import Chip
+    from parts.rangedarm import RangedArm
+    from parts.meleearm import MeleeArm
+    from parts.chest import Chest
+    from parts.legs import Legs
+    from parts.chip import Chip
 
     return {
         "RangedArm": RangedArm,

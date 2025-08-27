@@ -1,6 +1,5 @@
-from parts import *
-from lists import *
-from player import *
+from entities.player import *
+from .parts import *
 
 
 class MeleeArm(Part):

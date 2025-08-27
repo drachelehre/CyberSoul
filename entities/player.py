@@ -1,14 +1,10 @@
-import pygame
-import math
-from entity import *
-from constants import *
-from rangedarm import *
-from meleearm import *
-from shot import *
-from melee import *
-from chest import *
-from legs import *
-from chip import *
+from parts.meleearm import *
+from parts.rangedarm import *
+from .shot import *
+from .melee import *
+from parts.chest import *
+from parts.legs import *
+from parts.chip import *
 
 
 class Player(Entity):

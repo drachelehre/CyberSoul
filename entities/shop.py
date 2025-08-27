@@ -1,6 +1,6 @@
 from utils import generate_random_part
 import pygame, random
-from entity import *
+from .entity import *
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
