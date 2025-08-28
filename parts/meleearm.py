@@ -9,7 +9,11 @@ class MeleeArm(Part):
         self.melee_attack = melee_attack
         self.melee_size = melee_size
 
-    def melee_adjust(self):
+    def melee_adjust(self) -> None:
+        """Adjusts Melee arm stats depending on condition type
+
+        :return:
+        """
         if self.condition == "Decayed":
             self.worth = max(25, int(self.worth * 0.25))
             self.cost = max(5, int(self.cost * 0.1))
@@ -41,6 +45,10 @@ class MeleeArm(Part):
             self.melee_size = max(50, int(self.melee_size * 1.2))
 
     def to_dict(self):
+        """ Makes Melee Arm object into a dictionary for use in saving/loading
+
+        :return:
+        """
         return {
             "type": "MeleeArm",
             "name": self.name,

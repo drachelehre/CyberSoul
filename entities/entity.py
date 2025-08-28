@@ -2,6 +2,9 @@ import pygame
 
 
 class Entity(pygame.sprite.Sprite):
+    """
+    Superclass of all Entity classes
+    """
     def __init__(self, x, y, size):
         if hasattr(self, "containers"):
             super().__init__(self.containers)
@@ -20,6 +23,10 @@ class Entity(pygame.sprite.Sprite):
         self.collision_groups = []
 
     def update_rect(self):
+        """Tracks position of invisible rectangle hit box
+
+        :return: None
+        """
         self.rect.center = (round(self.position.x), round(self.position.y))
 
     def collides_with(self, other):

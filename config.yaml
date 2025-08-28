@@ -1,0 +1,31 @@
+screen:
+  width: 750
+  height: 500
+
+enemy:
+  min_size: 10
+  sizes: 4
+  base_speed: 40
+  max_size: 40   # optional: can compute in code as sizes * min_size
+  spawn_min: 3
+  spawn_max: 10
+  melee_size: 20
+  shoot_speed: 250
+  melee_rate: 1
+
+player:
+  base_speed: 50
+  base_regen: 0
+  base_regen_rate: 5
+  shoot_speed: 500
+
+shot:
+  base_range: 100
+  radius: 2
+
+melee:
+  base_size: 25
+  swipe_rate: 1
+
+ui:
+  items_per_page: 8

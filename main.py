@@ -155,7 +155,7 @@ def inventory_menu(screen, player):
             if isinstance(item, RangedArm):
                 text = f"{item.condition} {item.name}"
                 stats = (
-                    f"Worth: {item.worth} | "
+                    f"Worth: {item.worth} Credits | "
                     f"Attack: {item.ranged_attack} | "
                     f"Range: {item.shoot_range} | "
                     f"Rate: {item.rate} | "
@@ -169,7 +169,7 @@ def inventory_menu(screen, player):
             elif isinstance(item, MeleeArm):
                 text = f"{item.condition} {item.name}"
                 stats = (
-                    f"Worth: {item.worth} | "
+                    f"Worth: {item.worth} Credits | "
                     f"Attack: {item.melee_attack} | "
                     f"Range: {item.melee_size} | "
                     f"Cost: {item.cost} humanity"
@@ -182,7 +182,7 @@ def inventory_menu(screen, player):
             elif isinstance(item, Chest):
                 text = f"{item.condition} {item.name}"
                 stats = (
-                    f"Worth: {item.worth} | "
+                    f"Worth: {item.worth} Credits | "
                     f"Defense: {item.defense} | "
                     f"Cost {item.cost} humanity"
                 )
@@ -194,7 +194,7 @@ def inventory_menu(screen, player):
             elif isinstance(item, Legs):
                 text = f"{item.condition} {item.name}"
                 stats = (
-                    f"Worth: {item.worth} | "
+                    f"Worth: {item.worth} Credits| "
                     f"Speed: {item.speed} | "
                     f"Cost {item.cost} humanity"
                 )
@@ -206,7 +206,7 @@ def inventory_menu(screen, player):
             elif isinstance(item, Chip):
                 text = f"{item.condition} {item.name}"
                 stats = (
-                    f"Worth: {item.worth} | "
+                    f"Worth: {item.worth} Credits | "
                     f"Melee Rate: {item.melee_rate} | "
                     f"Regenerate: {item.regenerate} | "
                     f"Regen Rate: {item.regen_rate} | "
@@ -281,7 +281,7 @@ def shop_buy(screen, player, shop):
             if isinstance(item, RangedArm):
                 text = f"{item.condition} {item.name}"
                 stats = (
-                    f"Worth: {item.worth} | "
+                    f"Worth: {item.worth} Credits | "
                     f"Attack: {item.ranged_attack} | "
                     f"Range: {item.shoot_range} | "
                     f"Rate: {item.rate} | "
@@ -295,7 +295,7 @@ def shop_buy(screen, player, shop):
             elif isinstance(item, MeleeArm):
                 text = f"{item.condition} {item.name}"
                 stats = (
-                    f"Worth: {item.worth} | "
+                    f"Worth: {item.worth} Credits| "
                     f"Attack: {item.melee_attack} | "
                     f"Range: {item.melee_size} | "
                     f"Cost: {item.cost} humanity"
@@ -308,7 +308,7 @@ def shop_buy(screen, player, shop):
             elif isinstance(item, Chest):
                 text = f"{item.condition} {item.name}"
                 stats = (
-                    f"Worth: {item.worth} | "
+                    f"Worth: {item.worth} Credits | "
                     f"Defense: {item.defense} | "
                     f"Cost {item.cost} humanity"
                 )
@@ -320,7 +320,7 @@ def shop_buy(screen, player, shop):
             elif isinstance(item, Legs):
                 text = f"{item.condition} {item.name}"
                 stats = (
-                    f"Worth: {item.worth} | "
+                    f"Worth: {item.worth} Credits | "
                     f"Speed: {item.speed} | "
                     f"Cost {item.cost}"
                 )
@@ -332,7 +332,7 @@ def shop_buy(screen, player, shop):
             elif isinstance(item, Chip):
                 text = f"{item.condition} {item.name}"
                 stats = (
-                    f"Worth: {item.worth} | "
+                    f"Worth: {item.worth} Credits | "
                     f"Melee Rate: {item.melee_rate} | "
                     f"Regenerate: {item.regenerate} | "
                     f"Regen Rate: {item.regen_rate} | "
@@ -416,7 +416,7 @@ def shop_sell(screen, player, shop):
             if isinstance(item, RangedArm):
                 text = f"{item.condition} {item.name}"
                 stats = (
-                    f"Worth: {item.worth} | "
+                    f"Worth: {item.worth} Credits | "
                     f"Attack: {item.ranged_attack} | "
                     f"Range: {item.shoot_range} | "
                     f"Rate: {item.rate} | "
@@ -430,7 +430,7 @@ def shop_sell(screen, player, shop):
             elif isinstance(item, MeleeArm):
                 text = f"{item.condition} {item.name}"
                 stats = (
-                    f"Worth: {item.worth} | "
+                    f"Worth: {item.worth} Credits | "
                     f"Attack: {item.melee_attack} | "
                     f"Range: {item.melee_size} | "
                     f"Cost: {item.cost} humanity"
@@ -443,7 +443,7 @@ def shop_sell(screen, player, shop):
             elif isinstance(item, Chest):
                 text = f"{item.condition} {item.name}"
                 stats = (
-                    f"Worth: {item.worth} | "
+                    f"Worth: {item.worth} Credits | "
                     f"Defense: {item.defense} | "
                     f"Cost {item.cost} humanity"
                 )
@@ -455,7 +455,7 @@ def shop_sell(screen, player, shop):
             elif isinstance(item, Legs):
                 text = f"{item.condition} {item.name}"
                 stats = (
-                    f"Worth: {item.worth} | "
+                    f"Worth: {item.worth} Credits | "
                     f"Speed: {item.speed} | "
                     f"Cost {item.cost} humanity"
                 )
@@ -467,7 +467,7 @@ def shop_sell(screen, player, shop):
             elif isinstance(item, Chip):
                 text = f"{item.condition} {item.name}"
                 stats = (
-                    f"Worth: {item.worth} | "
+                    f"Worth: {item.worth} Credits | "
                     f"Melee Rate: {item.melee_rate} | "
                     f"Regenerate: {item.regenerate} | "
                     f"Regen Rate: {item.regen_rate} | "

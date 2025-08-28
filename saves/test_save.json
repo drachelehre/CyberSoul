@@ -9,13 +9,13 @@
     "defense": 20,
     "speed": 125,
     "humanity": 398.0,
-    "rotation": 55.547494666868126,
-    "credits": 4544,
+    "rotation": -129.96458310936805,
+    "credits": 4406,
     "shoot_range": 150,
     "shot_rate": 0.3,
     "melee_size": 30,
     "regenerate": 10,
-    "regen_timer": -0.016999999999999994,
+    "regen_timer": 0.083,
     "regen_rate": 0.1,
     "chip": {
         "type": "Chip",
@@ -90,32 +90,6 @@
             "melee_size": 40
         },
         {
-            "type": "MeleeArm",
-            "name": "Gladius",
-            "condition": "Decayed",
-            "worth": 62,
-            "cost": 5,
-            "melee_attack": 5,
-            "melee_size": 10
-        },
-        {
-            "type": "MeleeArm",
-            "name": "Gladius",
-            "condition": "Decayed",
-            "worth": 62,
-            "cost": 5,
-            "melee_attack": 5,
-            "melee_size": 10
-        },
-        {
-            "type": "Legs",
-            "name": "Athletic Springs",
-            "condition": "Subpar",
-            "worth": 75,
-            "cost": 12,
-            "speed": 80
-        },
-        {
             "type": "Chip",
             "name": "Wound Closure",
             "condition": "Decayed",
@@ -153,13 +127,12 @@
             "rate": 0.75
         },
         {
-            "type": "MeleeArm",
-            "name": "Dagger",
-            "condition": "Poor",
-            "worth": 50,
-            "cost": 7,
-            "melee_attack": 10,
-            "melee_size": 15
+            "type": "Legs",
+            "name": "Pneumatic Knees",
+            "condition": "Excellent",
+            "worth": 400,
+            "cost": 18,
+            "speed": 90
         }
     ]
 }

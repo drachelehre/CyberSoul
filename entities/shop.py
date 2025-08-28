@@ -26,7 +26,12 @@ class Shop(Entity):
         self.inventory = []
         self.stock()
 
-    def draw(self, screen):
+    def draw(self, screen) -> None:
+        """Draws shop
+
+        :param screen:
+        :return: None
+        """
         # Green rectangle
         pygame.draw.rect(screen, "green", self.rect)
 
@@ -39,7 +44,11 @@ class Shop(Entity):
         text_rect = text.get_rect(center=self.rect.center)
         screen.blit(text, text_rect)
 
-    def stock(self):
+    def stock(self) -> None:
+        """Stocks instance of shop
+
+        :return:
+        """
         self.inventory.clear()
         while len(self.inventory) < 7:
             part = generate_random_part()
